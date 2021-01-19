@@ -13,6 +13,17 @@ argocd_app_delete() {
     argocd app delete "$app"
 }
 
+argocd_app_deploy() {
+  preprocess_manifest "$1"
+
+  app=$(oq -r -i yaml .metadata.name .argocd.yml.dist)
+    echo "Application name \"$app\" extracted from manifest"
+
+  argocd app create -f .argocd.yml.dist --upsert
+  argocd app wait $app --timeout 240
+
+}
+
 preprocess_manifest() {
     manifest=${1:-.argocd.yml}
 
@@ -36,6 +47,7 @@ main() {
     case "$1" in
         '' | '-h' | '--help') usage && exit 0;;
         'app-delete') argocd_app_delete "$2" && exit 0;;
+        'app-deploy') argocd_app_deploy "$2" && exit 0;;
          *) argocd "$@"
             ;;
     esac

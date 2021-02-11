@@ -42,7 +42,7 @@ preprocess_manifest() {
     ref=$(jq -r .ref "$GITHUB_EVENT_PATH")
     repo=$(jq -r .repository.name "$GITHUB_EVENT_PATH")
 
-    GIT_REPONAME=$repo GIT_BRANCH=$ref gomplate -f "$manifest" -o "$manifest".dist
+    GIT_REPONAME=${GIT_REPONAME:-$repo} GIT_BRANCH=${GIT_BRANCH:-$ref} gomplate -f "$manifest" -o "$manifest".dist
 }
 
 main() {

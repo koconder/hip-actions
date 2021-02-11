@@ -25,8 +25,8 @@ argocd_app_deploy() {
   # Populate external URL to be used for GitHub Environment
   url=$(argocd app get $app -o json | jq -r '.status.summary.externalURLs[0]')
   
-  echo "##set-output name=app::$app"
-  echo "##set-output name=externalURL::$url"
+  echo "::set-output name=app::$app"
+  echo "::set-output name=externalURL::$url"
 }
 
 preprocess_manifest() {

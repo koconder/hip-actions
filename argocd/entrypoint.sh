@@ -2,7 +2,8 @@
 
 set -e
 
-source './functions.sh'
+# shellcheck source=functions.sh
+. "$(dirname "$0")/functions.sh"
 
 usage() {
     echo "usage: entrypoint.sh <app-deploy|app-delete>"

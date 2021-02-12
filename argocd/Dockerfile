@@ -16,8 +16,9 @@ ADD https://github.com/hairyhenderson/gomplate/releases/download/v3.7.0/gomplate
 
 RUN chmod 755 /usr/local/bin/argocd /usr/local/bin/oq /usr/local/bin/gomplate
 
-COPY functions.sh /functions.sh
-COPY entrypoint.sh /entrypoint.sh
+COPY functions.sh /
+COPY gomplate-helper.tpl /
+COPY entrypoint.sh /
 
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["help"]

@@ -52,7 +52,7 @@ generate_manifest() {
     echo "Generate ArgoCD application manifest from \"$manifest\""
 
     # Inject helper scripts into the manifest
-    cat gomplate-helper.tpl "$manifest" > "$manifest.predist"
+    cat "$(dirname "${BASH_SOURCE[0]}")/gomplate-helper.tpl" "$manifest" > "$manifest.predist"
 
     # Read workflow details from event file
     ref=$(jq -r .ref "$GITHUB_EVENT_PATH")

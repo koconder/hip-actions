@@ -2,6 +2,8 @@
 
 set -e
 
+source './functions.sh'
+
 usage() {
     echo "usage: entrypoint.sh <app-deploy|app-delete>"
 }

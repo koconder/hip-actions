@@ -39,9 +39,10 @@ argocd_app_deploy() {
 # TODO: use glob to process multiple argocd files
 # generate_manifest creates the ArgoCD application manifest that is being submitted to ArgoCD.
 generate_manifest() {
-    local manifest, ref, branch, repo
-
-    manifest=${1:-.argocd.yml}
+    local manifest=${1:-.argocd.yml}
+    local ref
+    local branch
+    local repo
 
     if [ ! -f "$manifest" ]; then
         echo "ArgoCD application manifest \"$manifest\" not found."

@@ -9,9 +9,19 @@ usage() {
     echo "usage: entrypoint.sh <app-deploy|app-delete>"
 }
 
+config() {
+    export ARGOCD_SERVER=${INPUT_SERVER}
+    export ARGOCD_OPTS=${INPUT_OPTS}
+    export ARGOCD_AUTH_TOKEN=${INPUT_AUTHTOKEN}
+    env
+}
+
 main() {
     echo "hipages ArgoCD Wrapper by Enrico Stahn."
     echo ""
+
+    # Configure environment variables for ArgoCD CLI
+    config
 
     case "$1" in
         '' | '-h' | '--help') usage && exit 0;;

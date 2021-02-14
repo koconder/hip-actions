@@ -1,5 +1,23 @@
-name: 'ArgoCD'
-description: 'GitHub Action for ArgoCD'
+name: "ArgoCD"
+description: "GitHub Action for ArgoCD"
 runs:
-  using: 'docker'
-  image: 'Dockerfile'
+  using: "docker"
+  image: "Dockerfile"
+inputs:
+  server:
+    description: "ArgoCD server domain."
+    required: true
+  opts:
+    description: "Additional options for the ArgoCD server."
+    required: true
+    default: "--grpc-web"
+  authToken:
+    description: "Authentication token"
+    required: true
+  manifests:
+    description: "The manifests to be processed (glob)."
+    required: true
+    default: ".argocd*.yml"
+outputs:
+  externalURL:
+    description: "Contains the ingress URL (if available)"

@@ -1,1 +1,1 @@
-{{- $isProd  := eq (getenv "GIT_BRANCH") "master" -}}
+{{- $isProd := eq (getenv "GIT_BRANCH") "master" -}}

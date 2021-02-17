@@ -60,7 +60,7 @@ generate_manifest() {
     # Read workflow details from event file
     ref=$(jq -r .ref "$GITHUB_EVENT_PATH")
     repo=$(jq -r .repository.name "$GITHUB_EVENT_PATH")
-    sha=$(jq -r .head "$GITHUB_EVENT_PATH")
+    sha=$(jq -r .after "$GITHUB_EVENT_PATH")
     branch=${ref#refs/heads/}
 
     APP_NAME=$(generate_app_name "${GIT_REPONAME:-$repo}" "${GIT_BRANCH:-$branch}") \

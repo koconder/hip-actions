@@ -59,11 +59,14 @@ generate_manifest() {
 
     # Read workflow details from event file
     ref=$(jq -r .ref "$GITHUB_EVENT_PATH")
-    branch=${ref#refs/heads/}
     repo=$(jq -r .repository.name "$GITHUB_EVENT_PATH")
+    sha=$(jq -r .head "$GITHUB_EVENT_PATH")
+    branch=${ref#refs/heads/}
 
     APP_NAME=$(generate_app_name "${GIT_REPONAME:-$repo}" "${GIT_BRANCH:-$branch}") \
     GIT_REPONAME=${GIT_REPONAME:-$repo} \
+    GIT_SHA=${GIT_SHA:-$sha} \
+    GIT_SHA_SHORT=${GIT_SHA_SHORT:-$(echo $sha | cut -c -80)} \
     GIT_REF=${GIT_REF:-$ref} \
     GIT_BRANCH=${GIT_BRANCH:-$branch} \
         gomplate -f "$manifest.predist" -o "$manifest".dist

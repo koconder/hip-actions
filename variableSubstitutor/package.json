@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@actions/core": "^1.6.0",
     "js-yaml": "^4.1.0",
     "jsonpath": "^1.1.1"
   }

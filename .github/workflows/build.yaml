@@ -40,7 +40,7 @@ jobs:
           cache-to: type=inline
           tags: ${{ steps.login-ecr.outputs.registry }}/${{ github.repository }}:latest,${{ steps.login-ecr.outputs.registry }}/${{ github.repository }}:${{ github.sha }}
 
-      - name: Container scan
-        uses: Azure/container-scan@v0
-        with:
-          image-name: ${{ steps.login-ecr.outputs.registry }}/${{ github.repository }}:${{ github.sha }}
+      # - name: Container scan
+      #   uses: Azure/container-scan@v0
+      #   with:
+      #     image-name: ${{ steps.login-ecr.outputs.registry }}/${{ github.repository }}:${{ github.sha }}

@@ -7,31 +7,32 @@ jobs:
     deploy:
       name: deploy
       runs-on: ubuntu-latest
-      if: ${{ false }}
-      environment:
-        name: ${{ fromJSON('["staging", "production"]')[github.ref == 'refs/heads/master'] }}
-        url: ${{ steps.argocd.outputs.externalURL }}
       steps:
         - name: Checkout
           uses: actions/checkout@v2
 
-        - name: Configure AWS credentials
-          uses: aws-actions/configure-aws-credentials@v1
+        - uses: hipagesgroup/actions/variableSubstitutor@js
+          id: argosub
           with:
-            aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-            aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-            aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+            files: '.argocd*.yaml'
 
-        - name: Login to Amazon ECR
-          id: login-ecr
-          uses: aws-actions/amazon-ecr-login@v1
+        # - name: Configure AWS credentials
+        #   uses: aws-actions/configure-aws-credentials@v1
+        #   with:
+        #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        #     aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
 
-        - uses: hipagesgroup/actions/argocd@master
-          id: argocd
-          with:
-            args: app-deploy
-            server: ${{ secrets.ARGOCD_SERVER }}
-            authToken: ${{ secrets.ARGOCD_AUTH_TOKEN }}
-          env:
-            IMAGE_REPOSITORY: ${{ steps.login-ecr.outputs.registry }}/${{ github.repository }}
-            IMAGE_TAG: ${{ github.sha }}
+        # - name: Login to Amazon ECR
+        #   id: login-ecr
+        #   uses: aws-actions/amazon-ecr-login@v1
+
+        # - uses: hipagesgroup/actions/argocd@master
+        #   id: argocd
+        #   with:
+        #     args: app-deploy
+        #     server: ${{ secrets.ARGOCD_SERVER }}
+        #     authToken: ${{ secrets.ARGOCD_AUTH_TOKEN }}
+        #   env:
+        #     IMAGE_REPOSITORY: ${{ steps.login-ecr.outputs.registry }}/${{ github.repository }}
+        #     IMAGE_TAG: ${{ github.sha }}

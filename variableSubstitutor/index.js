@@ -1,3 +1,4 @@
+var core = require('@actions/core');
 const yaml = require('js-yaml');
 var jp = require('jsonpath');
 const fs = require('fs');
@@ -11,23 +12,27 @@ try {
     console.log(e);
 }
 
-var jsonString = JSON.stringify(config);
+var filesInput = core.getInput("files", { required: true });
+var files = filesInput.split(",");
 
-var obj = JSON.parse(jsonString);
-//config.metadata.name = "newvalue";
+console.log("Substituting variables in the file: ", files);
+// var jsonString = JSON.stringify(config);
 
-var result = jp.query(obj, keyToReplace);
+// var obj = JSON.parse(jsonString);
+// //config.metadata.name = "newvalue";
 
-if(result){
-     result2 = jp.value(obj, keyToReplace, valueToReplace);
- }
-console.log(result);
+// var result = jp.query(obj, keyToReplace);
 
-console.log(result2);
+// if(result){
+//      result2 = jp.value(obj, keyToReplace, valueToReplace);
+//  }
+// console.log(result);
 
-// console.log(jsonString);
+// console.log(result2);
 
-// console.log(config.spec.source.helm.parameters[0].value);
+// // console.log(jsonString);
+
+// // console.log(config.spec.source.helm.parameters[0].value);
 
 
-//fs.writeFileSync(filename, yaml.dump(config));
+// //fs.writeFileSync(filename, yaml.dump(config));

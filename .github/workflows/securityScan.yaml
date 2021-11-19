@@ -2,6 +2,12 @@ name: Run security tests
 
 on:
   workflow_call:
+    secrets:
+      sonar_server:
+        required: true
+      sonar_token:
+        required: true
+
     
 jobs:
   sonar-scan:
@@ -39,8 +45,8 @@ jobs:
         run: |
           sonar-scanner \
               -Dsonar.projectKey="${CI_REPOSITORY_NAME_SLUG}" \
-              -Dsonar.host.url="${{ secrets.SONAR_SERVER }}" \
-              -Dsonar.login="${{ secrets.SONAR_TOKEN }}" \
+              -Dsonar.host.url="${{ secrets.sonar_server }}" \
+              -Dsonar.login="${{ secrets.sonar_token }}" \
               -Dsonar.projectVersion="${GITHUB_SHA}" \
               -Dsonar.links.scm="https://github.com/${GITHUB_REPOSITORY}" \
               -Dsonar.javascript.lcov.reportPaths="coverage/lcov.info" \

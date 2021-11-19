@@ -1,4 +1,4 @@
-var core = require('@actions/core');
+const core = require('@actions/core');
 const yaml = require('js-yaml');
 var jp = require('jsonpath');
 const fs = require('fs');

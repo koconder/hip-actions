@@ -1,0 +1,50 @@
+name: Run security tests
+
+on:
+  workflow_call:
+    
+jobs:
+  sonar-scan:
+    runs-on: ubuntu-latest
+    name: analyse
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Download test coverage data
+        uses: actions/download-artifact@v2
+        with:
+          name: coverage
+          path: coverage/
+
+      - uses: FranzDiebold/github-env-vars-action@v2
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2.4.1
+        with:
+          node-version: 14.x
+          cache: "yarn"
+
+      - name: Install Typescript
+        run: npm install typescript
+      
+      - name: Setup sonarqube
+        uses: warchant/setup-sonar-scanner@v3
+
+      - name: Run sonarqube
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+        run: |
+          sonar-scanner \
+              -Dsonar.projectKey="${CI_REPOSITORY_NAME_SLUG}" \
+              -Dsonar.host.url="${{ secrets.SONAR_SERVER }}" \
+              -Dsonar.login="${{ secrets.SONAR_TOKEN }}" \
+              -Dsonar.projectVersion="${GITHUB_SHA}" \
+              -Dsonar.links.scm="https://github.com/${GITHUB_REPOSITORY}" \
+              -Dsonar.javascript.lcov.reportPaths="coverage/lcov.info" \
+              -Dsonar.testExecutionReportPaths="coverage/test-report.xml" \
+              -Dsonar.coverage.exclusions="**/*.spec.ts,**/*.test.ts,test/**" \
+              -Dsonar.test.inclusions="**/*.spec.ts,**/*.test.ts" \
+              -Dsonar.sources=.

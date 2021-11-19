@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+metadata:
+  name: ${{ github.event.repository.name }}-${{ github.ref_name }}
+  labels:
+    hipages.com/environment: production
+    hipages.com/owner: platform
+  annotations:
+    hipages.com/git-repo: ${{ github.event.repository.name }}
+    hipages.com/git-branch: ${{ github.ref_name }}
+    hipages.com/git-hash: ${{ github.sha }}
+spec:
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+  project: ns-engineering
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: engineering
+  source:
+    repoURL: 'https://github.com/hipagesgroup/${{ github.event.repository.name }}.git'
+    path: helm/marketplace
+    targetRevision: ${{ github.sha }}
+    helm:
+      parameters:
+        - name: app
+          value: 'test'
+      valueFiles:
+        - values.prod.yaml

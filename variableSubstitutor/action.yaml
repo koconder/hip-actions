@@ -1,0 +1,9 @@
+name: "JSSubstitutor"
+description: "GitHub Action for Yaml substitution"
+runs:
+  using: "node12"
+  main: "index.js"
+inputs:
+  files:
+    description: "Files to substitute."
+    required: true

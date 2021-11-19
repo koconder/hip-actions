@@ -1,0 +1,32 @@
+name: Run nodeJs  / Yarn tests against the repository code
+
+on:
+  workflow_call:
+
+
+jobs:
+  runYarnTest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2.4.1
+        with:
+          node-version: 14.x
+
+      - name: Install project dependencies
+        run: yarn install
+
+      - name: Run tests
+        run: yarn test:cov
+
+      - name: Run e2e tests
+        run: yarn test:e2e
+
+      - name: Upload test coverage file for sonar-scan
+        uses: actions/upload-artifact@v2
+        with:
+          name: coverage
+          path: coverage/

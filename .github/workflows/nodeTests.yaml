@@ -22,8 +22,8 @@ jobs:
       - name: Run tests
         run: yarn test:cov
 
-      - name: Run e2e tests
-        run: yarn test:e2e
+      # - name: Run e2e tests
+      #   run: yarn test:e2e
 
       - name: Upload test coverage file for sonar-scan
         uses: actions/upload-artifact@v2

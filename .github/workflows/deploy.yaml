@@ -2,10 +2,10 @@ name: Deploy app using Argo actions
 
 on:
   workflow_call:
-  inputs:
-    files:
-      required: true
-      type: string
+    inputs:
+      files:
+        required: true
+        type: string
     
 jobs:
     deploy:

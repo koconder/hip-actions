@@ -11,12 +11,11 @@ on:
         required: true
 
 jobs:
-  build:
+  build-image:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -39,8 +38,15 @@ jobs:
           cache-from: type=registry,ref=${{ steps.login-ecr.outputs.registry }}/${{ github.repository }}:latest
           cache-to: type=inline
           tags: ${{ steps.login-ecr.outputs.registry }}/${{ github.repository }}:latest,${{ steps.login-ecr.outputs.registry }}/${{ github.repository }}:${{ github.sha }}
-
-      # - name: Container scan
-      #   uses: Azure/container-scan@v0
-      #   with:
-      #     image-name: ${{ steps.login-ecr.outputs.registry }}/${{ github.repository }}:${{ github.sha }}
+    outputs:
+      ecr_repository: ${{ steps.login-ecr.outputs.registry }}
+      
+      
+  # scan-image:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Container scan
+  #       uses: Azure/container-scan@v0
+  #       with:
+  #         image-name: ${{ build-image.output.ecr_repository }}/${{ github.repository }}:${{ github.sha }}
+    

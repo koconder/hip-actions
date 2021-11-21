@@ -2,6 +2,10 @@ name: Deploy app using Argo actions
 
 on:
   workflow_call:
+  inputs:
+    files:
+      required: true
+      type: string
     
 jobs:
     deploy:
@@ -14,7 +18,7 @@ jobs:
         - uses: hipagesgroup/actions/variableSubstitutor@js
           id: argosub
           with:
-            files: '.argocd*.yaml'
+            files: ${{ inputs.files }}
 
         # - name: Configure AWS credentials
         #   uses: aws-actions/configure-aws-credentials@v1

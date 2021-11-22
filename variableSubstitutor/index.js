@@ -15,12 +15,16 @@ try {
 var filesInput = core.getInput("files", { required: true });
 var files = filesInput.split(",");
 
-console.log("Substituting variables in the file: ", files);
+console.log("Substituted variables in the file: ", files);
 
-var variables = process.env;
+console.log("Reading file content...");
 
-console.log("Defined variables are: ");
-console.log(variables);
+console.log(yaml.dump(config));
+
+// var variables = process.env;
+
+// console.log("Defined variables are: ");
+// console.log(variables);
 // var jsonString = JSON.stringify(config);
 
 // var obj = JSON.parse(jsonString);

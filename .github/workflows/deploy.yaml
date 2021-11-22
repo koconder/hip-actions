@@ -15,6 +15,14 @@ jobs:
         - name: Checkout
           uses: actions/checkout@v2
 
+        - uses: franzbischoff/replace_envs@v1
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          with:
+            from_file: ${{ inputs.files }}
+            to_file: ${{ inputs.files }}
+            commit: 'false'
+
         - uses: hipagesgroup/actions/variableSubstitutor@js
           id: argosub
           with:

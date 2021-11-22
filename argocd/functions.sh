@@ -16,27 +16,31 @@ argocd_app_delete() {
 }
 
 argocd_app_deploy() {
-    generate_manifest "$1"
-    if [ $? -ne 0 ]; then
-        echo "Manifest generation failed."
-        exit 1
-    fi
 
-    app=$(oq -r -i yaml .metadata.name .argocd.yml.dist)
-    echo "Application name \"$app\" extracted from manifest"
-    echo "---"
-    cat .argocd.yml.dist
-    echo "---"
+    echo "Current argo file is:"
+
+    cat .argocd.branches.yaml
+    # generate_manifest "$1"
+    # if [ $? -ne 0 ]; then
+    #     echo "Manifest generation failed."
+    #     exit 1
+    # fi
+
+    # app=$(oq -r -i yaml .metadata.name .argocd.yml.dist)
+    # echo "Application name \"$app\" extracted from manifest"
+    # echo "---"
+    # cat .argocd.yml.dist
+    # echo "---"
     
-    argocd app create -f .argocd.yml.dist --upsert || exit 1
+    # argocd app create -f .argocd.yml.dist --upsert || exit 1
 
-    # Populate external URL to be used for GitHub Environment
-    url=$(argocd app get "$app" -o json | jq -r '.status.summary.externalURLs[0]')
+    # # Populate external URL to be used for GitHub Environment
+    # url=$(argocd app get "$app" -o json | jq -r '.status.summary.externalURLs[0]')
 
-    echo "::set-output name=app::$app"
-    echo "::set-output name=externalURL::$url"
+    # echo "::set-output name=app::$app"
+    # echo "::set-output name=externalURL::$url"
 
-    argocd app wait "$app" --timeout ${ARGOCD_TIMEOUT:-240} || exit 1
+    # argocd app wait "$app" --timeout ${ARGOCD_TIMEOUT:-240} || exit 1
 }
 
 # TODO: use glob to process multiple argocd files

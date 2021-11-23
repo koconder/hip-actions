@@ -2,6 +2,11 @@ name: Run PHP  workflow
 
 on:
   workflow_call:
+    secrets:
+      aws-access-key-id:
+        required: true
+      aws-secret-access-key:
+        required: true
 
 jobs:
   dependency-cache:
@@ -27,8 +32,8 @@ jobs:
       hip:
         image: 855460960717.dkr.ecr.us-east-1.amazonaws.com/buildpack-php-builder:7.3
         credentials:
-          username: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          password: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          username: ${{ inputs.aws-access-key-id }}
+          password: ${{ inputs.aws-secret-access-key }}
         env:
           APPLICATION_ENV: "docker"
           MEMCACHED_HOST: "127.0.0.1:11211"
@@ -56,8 +61,8 @@ jobs:
       db:
         image: 855460960717.dkr.ecr.ap-southeast-2.amazonaws.com/hipagesgroup/db-hip:master
         credentials:
-          username: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          password: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          username: ${{ inputs.aws-access-key-id }}
+          password: ${{ inputs.aws-secret-access-key }}
         ports:
           - 3306:3306
       memcache:

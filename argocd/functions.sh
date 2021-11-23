@@ -32,7 +32,7 @@ argocd_app_deploy() {
     # cat .argocd.yml.dist
     # echo "---"
     
-    # argocd app create -f .argocd.yml.dist --upsert || exit 1
+    argocd app create -f .argocd.branches.yaml --upsert || exit 1
 
     # # Populate external URL to be used for GitHub Environment
     # url=$(argocd app get "$app" -o json | jq -r '.status.summary.externalURLs[0]')

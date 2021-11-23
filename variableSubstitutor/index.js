@@ -17,14 +17,14 @@ var files = filesInput.split(",");
 
 console.log("Substituted variables in the file: ", files);
 
-console.log("Reading file content...");
+// console.log("Reading file content...");
 
-console.log(yaml.dump(config));
+// console.log(yaml.dump(config));
 
-// var variables = process.env;
+var variables = process.env;
 
-// console.log("Defined variables are: ");
-// console.log(variables);
+console.log("Defined variables are: ");
+console.log(variables);
 // var jsonString = JSON.stringify(config);
 
 // var obj = JSON.parse(jsonString);

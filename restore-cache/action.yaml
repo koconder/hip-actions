@@ -1,0 +1,48 @@
+name: Restore cache
+description: restore dependency cache
+
+inputs:
+  language:
+    description: PHP / Nodejs / Python
+    required: true
+
+outputs:
+  cache-hit:
+    description: Cache hit or not
+    value: ${{ steps.login-ecr.outputs.registry }}/${{ github.repository }}:${{ github.sha }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Get Composer Cache Directory
+      if: ${{ inputs.language == 'php' }}
+      id: composer-cache
+      run: |
+        echo "::set-output name=dir::$(composer config cache-files-dir)"
+      shell: bash
+    - uses: actions/cache@v2
+      if: ${{ inputs.language == 'php' }}
+      with:
+        path: ${{ steps.composer-cache.outputs.dir }}
+        key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-composer-
+    - run: composer install --no-interaction --no-progress --prefer-dist --profile
+      shell: bash
+      if: ${{ inputs.language == 'php' }}
+
+    
+    - uses: actions/setup-node@v2
+      if: ${{ inputs.language == 'node' }}
+      with:
+        node-version: 14.x
+    - uses: actions/cache@v2
+      if: ${{ inputs.language == 'node' }}
+      id: cache-node-modules
+      with:
+        path: node_modules
+        key: node-modules-${{ hashFiles('package-lock.json') }}
+    - run: yarn install
+      if: steps.cache-node-modules.outputs.cache-hit != 'true' && ${{ inputs.language == 'node' }}
+      shell: bash
+

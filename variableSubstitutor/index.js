@@ -2,7 +2,7 @@ const core = require('@actions/core');
 const yaml = require('js-yaml');
 var jp = require('jsonpath');
 const fs = require('fs');
-var filename = ".argocd.yaml";
+var filename = ".argocd.branches.yaml";
 var keyToReplace = "$.spec.source.helm.parameters[0].value";
 var valueToReplace = "random-name";
 let config = {};
@@ -12,19 +12,21 @@ try {
     console.log(e);
 }
 
-var filesInput = core.getInput("files", { required: true });
-var files = filesInput.split(",");
+console.log("Reading argo file...");
+console.log(yaml.dump(config));
+// var filesInput = core.getInput("files", { required: true });
+// var files = filesInput.split(",");
 
-console.log("Substituted variables in the file: ", files);
+// console.log("Substituted variables in the file: ", files);
 
-// console.log("Reading file content...");
+// // console.log("Reading file content...");
 
-// console.log(yaml.dump(config));
+// // console.log(yaml.dump(config));
 
-var variables = process.env;
+// var variables = process.env;
 
-console.log("Defined variables are: ");
-console.log(variables);
+// console.log("Defined variables are: ");
+// console.log(variables);
 // var jsonString = JSON.stringify(config);
 
 // var obj = JSON.parse(jsonString);

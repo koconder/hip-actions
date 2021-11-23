@@ -67,17 +67,17 @@ jobs:
     steps:
       - run: composer install --no-interaction --no-progress --prefer-dist --profile
 
-  run-unit-test:
-    runs-on: ubuntu-latest
-    needs: dependency-cache
-    name: Run unit tests
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+  # run-unit-test:
+  #   runs-on: ubuntu-latest
+  #   needs: dependency-cache
+  #   name: Run unit tests
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v2
 
-      - uses: actions/cache@v2
-        with:
-          path: ${{ jobs.dependency-cache.steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+  #     - uses: actions/cache@v2
+  #       with:
+  #         path: ${{ jobs.dependency-cache.steps.composer-cache.outputs.dir }}
+  #         key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
 
       

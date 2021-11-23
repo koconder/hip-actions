@@ -7,14 +7,77 @@ jobs:
   dependency-cache:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-        with:
-          node-version: 14.x
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: |
+          echo "::set-output name=dir::$(composer config cache-files-dir)"
       - uses: actions/cache@v2
-        id: cache-node-modules
         with:
-          path: node_modules
-          key: node-modules-${{ hashFiles('package-lock.json') }}
-      - run: yarn install
-        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+      - run: composer install
+        if: steps.composer-cache.outputs.cache-hit != 'true'
+  
+  run-tests:
+    runs-on: ubuntu-latest
+    services:
+      hip:
+        image: 855460960717.dkr.ecr.us-east-1.amazonaws.com/buildpack-php-builder:7.3
+        credentials:
+          username: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          password: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        env:
+          APPLICATION_ENV: "docker"
+          MEMCACHED_HOST: "127.0.0.1:11211"
+          dbhost: 127.0.0.1
+          dbuser: hip
+          dbpass: Lpcn#94K3Mz
+          dbname: hip
+          dbname_slave_server: hip
+          database_central_params_host: 127.0.0.1
+          database_central_params_username: hip
+          database_central_params_password: Lpcn#94K3Mz
+          database_central_params_dbname: central
+          dbhost_licensing: 127.0.0.1
+          dbuser_licensing: hip
+          dbpass_licensing: Lpcn#94K3Mz
+          dbname_licensing: license
+          dbhost_message_hip: 127.0.0.1
+          dbuser_message_hip: hip
+          dbpass_message_hip: Lpcn#94K3Mz
+          dbname_message_hip: message_hip
+          dbhost_slave_server_central: 127.0.0.1
+          dbuser_slave_server_central: hip
+          dbpass_slave_server_central: Lpcn#94K3Mz
+          dbname_slave_server_central: central
+      db:
+        image: 855460960717.dkr.ecr.ap-southeast-2.amazonaws.com/hipagesgroup/db-hip:master
+        credentials:
+          username: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          password: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        ports:
+          - 3306:3306
+      memcache:
+        ports:
+          - 11211:11211
+        image: memcached
+    
+    steps:
+      - run: composer install --no-interaction --no-progress --prefer-dist --profile
+
+  run-unit-test:
+    runs-on: ubuntu-latest
+    needs: dependency-cache
+    name: Run unit tests
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - uses: actions/cache@v2
+        with:
+          path: ${{ jobs.dependency-cache.steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+
+      

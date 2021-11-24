@@ -23,6 +23,9 @@ jobs:
     runs-on: ubuntu-latest
     name: Run Unit tests
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
       - uses: actions/setup-node@v2
         with:
           node-version: '14'
@@ -38,17 +41,17 @@ jobs:
           name: coverage
           path: coverage/
 
-  # run-integration-tests:
-  #   runs-on: ubuntu-latest
-  #   name: Run integration tests
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v2
+  run-integration-tests:
+    runs-on: ubuntu-latest
+    name: Run integration tests
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+          cache: 'yarn'
 
-  #     - uses: actions/cache@v2
-  #       with:
-  #         path: node_modules
-  #         key: node-modules-${{ hashFiles('package-lock.json') }}
-
-  #     - name: Run e2e tests
-  #       run: yarn test:e2e
+      - name: Run e2e tests
+        run: yarn test:e2e

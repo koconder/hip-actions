@@ -19,7 +19,7 @@ argocd_app_deploy() {
 
     echo "Current argo file is:"
 
-    cat .argocd.branches.yaml
+    cat $INPUT_DEPLOY_FILE
     # generate_manifest "$1"
     # if [ $? -ne 0 ]; then
     #     echo "Manifest generation failed."
@@ -32,7 +32,7 @@ argocd_app_deploy() {
     # cat .argocd.yml.dist
     # echo "---"
     
-    argocd app create -f .argocd.branches.yaml --upsert || exit 1
+    argocd app create -f $INPUT_DEPLOY_FILE --upsert || exit 1
 
     # # Populate external URL to be used for GitHub Environment
     # url=$(argocd app get "$app" -o json | jq -r '.status.summary.externalURLs[0]')

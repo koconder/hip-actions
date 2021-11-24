@@ -23,7 +23,7 @@ jobs:
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-composer-
-      - run: composer self-update && composer install --no-interaction --no-progress --prefer-dist --profile -d $(realpath $(eval echo ${RUNNER_WORKSPACE})/hip-shared)
+      - run: composer self-update && composer install --no-interaction --no-progress --prefer-dist --profile -d $(realpath $(eval echo ${PWD})/hip-shared)
         if: steps.composer-cache.outputs.cache-hit != 'true'
     outputs:
       composer-cache: ${{ steps.composer-cache.outputs.dir }}

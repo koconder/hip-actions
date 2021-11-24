@@ -23,17 +23,20 @@ jobs:
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-composer-
-      - run: composer install
+      - run: composer self-update && composer install --no-interaction --no-progress --prefer-dist --profile -d $(realpath $(eval echo ${RUNNER_WORKSPACE})/hip-shared)
         if: steps.composer-cache.outputs.cache-hit != 'true'
+    outputs:
+      composer-cache: ${{ steps.composer-cache.outputs.dir }}
   
   run-tests:
     runs-on: ubuntu-latest
+    needs: dependency-cache
     services:
       hip:
         image: 855460960717.dkr.ecr.us-east-1.amazonaws.com/buildpack-php-builder:7.3
-        credentials:
-          username: ${{ inputs.aws-access-key-id }}
-          password: ${{ inputs.aws-secret-access-key }}
+        # credentials:
+        #   username: ${{ inputs.aws-access-key-id }}
+        #   password: ${{ inputs.aws-secret-access-key }}
         env:
           APPLICATION_ENV: "docker"
           MEMCACHED_HOST: "127.0.0.1:11211"
@@ -60,9 +63,9 @@ jobs:
           dbname_slave_server_central: central
       db:
         image: 855460960717.dkr.ecr.ap-southeast-2.amazonaws.com/hipagesgroup/db-hip:master
-        credentials:
-          username: ${{ inputs.aws-access-key-id }}
-          password: ${{ inputs.aws-secret-access-key }}
+        # credentials:
+        #   username: ${{ inputs.aws-access-key-id }}
+        #   password: ${{ inputs.aws-secret-access-key }}
         ports:
           - 3306:3306
       memcache:
@@ -72,7 +75,15 @@ jobs:
     
     steps:
       - uses: actions/checkout@v2
-      - run: composer install --no-interaction --no-progress --prefer-dist --profile
+      - uses: actions/cache@v2
+        with:
+          path: jobs.dependency-cache.outputs.composer-cache
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+      - run: hip-shared/vendor/bin/paratest --runner Runner \
+              --configuration=hip-shared/tests/phpunit.xml \
+              --coverage-php=/tmp/coverage/Unit.cov \
+              --testsuite=Unit,TransactionalIntegrationTests \
+              --verbose=1 -p 8
 
   # run-unit-test:
   #   runs-on: ubuntu-latest

@@ -56,8 +56,8 @@ jobs:
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.github_token }}
-      volumes:
-        - ${{ env.GITHUB_WORKSPACE }}:${{ env.GITHUB_WORKSPACE }}
+      # volumes:
+      #   - ${{ env.GITHUB_WORKSPACE }}:${{ env.GITHUB_WORKSPACE }}
       env:
         APPLICATION_ENV: "docker"
         MEMCACHED_HOST: "memcache:11211"
@@ -121,8 +121,8 @@ jobs:
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.github_token }}
-      volumes:
-        - ${{ env.GITHUB_WORKSPACE }}:${{ env.GITHUB_WORKSPACE }}
+      # volumes:
+      #   - ${{ env.GITHUB_WORKSPACE }}:${{ env.GITHUB_WORKSPACE }}
       env:
         APPLICATION_ENV: "docker"
         MEMCACHED_HOST: "memcache:11211"

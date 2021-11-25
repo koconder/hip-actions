@@ -36,48 +36,6 @@ jobs:
   run-unit-tests:
     runs-on: ubuntu-latest
     needs: dependency-cache
-    services:
-      hip:
-        image: 855460960717.dkr.ecr.ap-southeast-2.amazonaws.com/buildpack-php-builder:7.3
-        credentials:
-          username: ${{ secrets.aws-access-key-id }}
-          password: ${{ secrets.aws-secret-access-key }}
-        env:
-          APPLICATION_ENV: "docker"
-          MEMCACHED_HOST: "127.0.0.1:11211"
-          dbhost: 127.0.0.1
-          dbuser: hip
-          dbpass: Lpcn#94K3Mz
-          dbname: hip
-          dbname_slave_server: hip
-          database_central_params_host: 127.0.0.1
-          database_central_params_username: hip
-          database_central_params_password: Lpcn#94K3Mz
-          database_central_params_dbname: central
-          dbhost_licensing: 127.0.0.1
-          dbuser_licensing: hip
-          dbpass_licensing: Lpcn#94K3Mz
-          dbname_licensing: license
-          dbhost_message_hip: 127.0.0.1
-          dbuser_message_hip: hip
-          dbpass_message_hip: Lpcn#94K3Mz
-          dbname_message_hip: message_hip
-          dbhost_slave_server_central: 127.0.0.1
-          dbuser_slave_server_central: hip
-          dbpass_slave_server_central: Lpcn#94K3Mz
-          dbname_slave_server_central: central
-      db:
-        image: 855460960717.dkr.ecr.ap-southeast-2.amazonaws.com/hipagesgroup/db-hip:master
-        credentials:
-          username: ${{ secrets.aws-access-key-id }}
-          password: ${{ secrets.aws-secret-access-key }}
-        ports:
-          - 3306:3306
-      memcache:
-        ports:
-          - 11211:11211
-        image: memcached
-    
     steps:
       - uses: actions/checkout@v2
       - uses: actions/cache@v2
@@ -94,15 +52,22 @@ jobs:
           name: unit-coverage
           path: /tmp/coverage/Unit.cov
 
-  run-integration-tests:
-    runs-on: ubuntu-latest
-    needs: dependency-cache
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.aws-access-key-id }}
+          aws-secret-access-key: ${{ secrets.aws-secret-access-key }}
+          aws-region: "ap-southeast-2"
+
+      - name: Get AWS password
+        run: echo "AWS_PASSWORD=$(aws ecr get-login-password --region ap-southeast-2)" >> $GITHUB_ENV
+
     services:
       hip:
         image: 855460960717.dkr.ecr.ap-southeast-2.amazonaws.com/buildpack-php-builder:7.3
         credentials:
-          username: ${{ secrets.aws-access-key-id }}
-          password: ${{ secrets.aws-secret-access-key }}
+          username: AWS
+          password: ${{ env.AWS_PASSWORD }}
         env:
           APPLICATION_ENV: "docker"
           MEMCACHED_HOST: "127.0.0.1:11211"
@@ -130,15 +95,20 @@ jobs:
       db:
         image: 855460960717.dkr.ecr.ap-southeast-2.amazonaws.com/hipagesgroup/db-hip:master
         credentials:
-          username: ${{ secrets.aws-access-key-id }}
-          password: ${{ secrets.aws-secret-access-key }}
+          username: AWS
+          password: ${{ env.AWS_PASSWORD }}
         ports:
           - 3306:3306
       memcache:
         ports:
           - 11211:11211
         image: memcached
+    
+    
 
+  run-integration-tests:
+    runs-on: ubuntu-latest
+    needs: dependency-cache
     steps:
       - uses: actions/checkout@v2
       - uses: actions/cache@v2
@@ -155,6 +125,61 @@ jobs:
         with:
           name: integ-coverage
           path: /tmp/coverage/Integration.cov
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.aws-access-key-id }}
+          aws-secret-access-key: ${{ secrets.aws-secret-access-key }}
+          aws-region: "ap-southeast-2"
+
+      - name: Get AWS password
+        run: echo "AWS_PASSWORD=$(aws ecr get-login-password --region ap-southeast-2)" >> $GITHUB_ENV
+
+
+    services:
+      hip:
+        image: 855460960717.dkr.ecr.ap-southeast-2.amazonaws.com/buildpack-php-builder:7.3
+        credentials:
+          username: AWS
+          password: ${{ env.AWS_PASSWORD }}
+        env:
+          APPLICATION_ENV: "docker"
+          MEMCACHED_HOST: "127.0.0.1:11211"
+          dbhost: 127.0.0.1
+          dbuser: hip
+          dbpass: Lpcn#94K3Mz
+          dbname: hip
+          dbname_slave_server: hip
+          database_central_params_host: 127.0.0.1
+          database_central_params_username: hip
+          database_central_params_password: Lpcn#94K3Mz
+          database_central_params_dbname: central
+          dbhost_licensing: 127.0.0.1
+          dbuser_licensing: hip
+          dbpass_licensing: Lpcn#94K3Mz
+          dbname_licensing: license
+          dbhost_message_hip: 127.0.0.1
+          dbuser_message_hip: hip
+          dbpass_message_hip: Lpcn#94K3Mz
+          dbname_message_hip: message_hip
+          dbhost_slave_server_central: 127.0.0.1
+          dbuser_slave_server_central: hip
+          dbpass_slave_server_central: Lpcn#94K3Mz
+          dbname_slave_server_central: central
+      db:
+        image: 855460960717.dkr.ecr.ap-southeast-2.amazonaws.com/hipagesgroup/db-hip:master
+        credentials:
+          username: AWS
+          password: ${{ env.AWS_PASSWORD }}
+        ports:
+          - 3306:3306
+      memcache:
+        ports:
+          - 11211:11211
+        image: memcached
+
+    
 
 
       # - name: Download math result for job 1

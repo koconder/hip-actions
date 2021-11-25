@@ -7,7 +7,7 @@ on:
         required: true
       aws-secret-access-key:
         required: true
-      ecr_password:
+      github_token:
         required: true
 
 jobs:
@@ -66,10 +66,10 @@ jobs:
           path: /tmp/coverage/Unit.cov
     services:
       hip:
-        image: 855460960717.dkr.ecr.ap-southeast-2.amazonaws.com/buildpack-php-builder:7.3
+        image: ghcr.io/hipagesgroup/buildpack-php-builder:7.3
         credentials:
-          username: AWS
-          password: ${{ secrets.ecr_password }}
+          username: hipagesgroup
+          password: ${{ secrets.github_token }}
         env:
           APPLICATION_ENV: "docker"
           MEMCACHED_HOST: "127.0.0.1:11211"
@@ -95,10 +95,10 @@ jobs:
           dbpass_slave_server_central: Lpcn#94K3Mz
           dbname_slave_server_central: central
       db:
-        image: 855460960717.dkr.ecr.ap-southeast-2.amazonaws.com/hipagesgroup/db-hip:master
+        image: ghcr.io/hipagesgroup/db-hip:master
         credentials:
-          username: AWS
-          password: ${{ secrets.ecr_password }}
+          username: hipagesgroup
+          password: ${{ secrets.github_token }}
         ports:
           - 3306:3306
       memcache:
@@ -130,10 +130,10 @@ jobs:
 
     services:
       hip:
-        image: 855460960717.dkr.ecr.ap-southeast-2.amazonaws.com/buildpack-php-builder:7.3
+        image: ghcr.io/hipagesgroup/buildpack-php-builder:7.3
         credentials:
-          username: AWS
-          password: ${{ secrets.ecr_password }}
+          username: hipagesgroup
+          password: ${{ secrets.github_token }}
         env:
           APPLICATION_ENV: "docker"
           MEMCACHED_HOST: "127.0.0.1:11211"
@@ -159,10 +159,10 @@ jobs:
           dbpass_slave_server_central: Lpcn#94K3Mz
           dbname_slave_server_central: central
       db:
-        image: 855460960717.dkr.ecr.ap-southeast-2.amazonaws.com/hipagesgroup/db-hip:master
+        image: ghcr.io/hipagesgroup/db-hip:master
         credentials:
-          username: AWS
-          password: ${{ secrets.ecr_password }}
+          username: hipagesgroup
+          password: ${{ secrets.github_token }}
         ports:
           - 3306:3306
       memcache:

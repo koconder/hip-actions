@@ -68,7 +68,7 @@ jobs:
       hip:
         image: ghcr.io/hipagesgroup/buildpack-php-builder:7.3
         volumes:
-          - ${{ jobs.dependency-cache.outputs.composer-cache }}:${{ jobs.dependency-cache.outputs.composer-cache }}
+          - jobs.dependency-cache.outputs.composer-cache:jobs.dependency-cache.outputs.composer-cache
         credentials:
           username: ${{ github.actor }}
           password: ${{ secrets.github_token }}

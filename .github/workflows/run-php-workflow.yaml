@@ -80,6 +80,24 @@ jobs:
           dbuser_slave_server_central: hip
           dbpass_slave_server_central: Lpcn#94K3Mz
           dbname_slave_server_central: central
+        steps:
+          - uses: actions/checkout@v2
+          - uses: actions/cache@v2
+            with:
+              path: jobs.dependency-cache.outputs.composer-cache
+              key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          - run: php -v
+          - run: echo $(composer config cache-files-dir)
+          - run: composer self-update && composer install --no-interaction --no-progress --prefer-dist --profile -d $(realpath $(eval echo ${PWD})/hip-shared)
+          - run: hip-shared/vendor/bin/paratest --runner Runner \
+                  --configuration=hip-shared/tests/phpunit.xml \
+                  --coverage-php=/tmp/coverage/Unit.cov \
+                  --testsuite=Unit,TransactionalIntegrationTests \
+                  --verbose=1 -p 8
+          - uses: actions/upload-artifact@v2
+            with:
+              name: unit-coverage
+              path: /tmp/coverage/Unit.cov
       db:
         image: ghcr.io/hipagesgroup/db-hip:master
         credentials:
@@ -91,24 +109,7 @@ jobs:
         ports:
           - 11211:11211
         image: memcached
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/cache@v2
-        with:
-          path: jobs.dependency-cache.outputs.composer-cache
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-      - run: php -v
-      - run: echo $(composer config cache-files-dir)
-      - run: composer self-update && composer install --no-interaction --no-progress --prefer-dist --profile -d $(realpath $(eval echo ${PWD})/hip-shared)
-      - run: hip-shared/vendor/bin/paratest --runner Runner \
-              --configuration=hip-shared/tests/phpunit.xml \
-              --coverage-php=/tmp/coverage/Unit.cov \
-              --testsuite=Unit,TransactionalIntegrationTests \
-              --verbose=1 -p 8
-      - uses: actions/upload-artifact@v2
-        with:
-          name: unit-coverage
-          path: /tmp/coverage/Unit.cov
+
     
     
 

@@ -68,7 +68,7 @@ jobs:
       hip:
         image: ghcr.io/hipagesgroup/buildpack-php-builder:7.3
         credentials:
-          username: hipagesgroup
+          username: ${{ github.actor }}
           password: ${{ secrets.github_token }}
         env:
           APPLICATION_ENV: "docker"
@@ -97,7 +97,7 @@ jobs:
       db:
         image: ghcr.io/hipagesgroup/db-hip:master
         credentials:
-          username: hipagesgroup
+          username: ${{ github.actor }}
           password: ${{ secrets.github_token }}
         ports:
           - 3306:3306
@@ -132,7 +132,7 @@ jobs:
       hip:
         image: ghcr.io/hipagesgroup/buildpack-php-builder:7.3
         credentials:
-          username: hipagesgroup
+          username: ${{ github.actor }}
           password: ${{ secrets.github_token }}
         env:
           APPLICATION_ENV: "docker"
@@ -161,7 +161,7 @@ jobs:
       db:
         image: ghcr.io/hipagesgroup/db-hip:master
         credentials:
-          username: hipagesgroup
+          username: ${{ github.actor }}
           password: ${{ secrets.github_token }}
         ports:
           - 3306:3306

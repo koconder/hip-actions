@@ -18,10 +18,11 @@ jobs:
         with:
           php-version: '7.3'
       - name: Get Composer Cache Directory
-        id: composer-cache
+        id: composer-cache-dir
         run: |
           echo "::set-output name=dir::$(composer config cache-files-dir)"
       - uses: actions/cache@v2
+        id: composer-cache
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
@@ -30,14 +31,14 @@ jobs:
       - run: composer self-update && composer install --no-interaction --no-progress --prefer-dist --profile -d $(realpath $(eval echo ${PWD})/hip-shared)
         if: steps.composer-cache.outputs.cache-hit != 'true'
     outputs:
-      composer-cache: ${{ steps.composer-cache.outputs.dir }}
+      composer-cache: ${{ steps.composer-cache-dir.outputs.dir }}
   
   run-unit-tests:
     runs-on: ubuntu-latest
     needs: dependency-cache
     services:
       hip:
-        image: 855460960717.dkr.ecr.us-east-1.amazonaws.com/buildpack-php-builder:7.3
+        image: 855460960717.dkr.ecr.ap-southeast-2.amazonaws.com/buildpack-php-builder:7.3
         credentials:
           username: ${{ secrets.aws-access-key-id }}
           password: ${{ secrets.aws-secret-access-key }}
@@ -98,7 +99,7 @@ jobs:
     needs: dependency-cache
     services:
       hip:
-        image: 855460960717.dkr.ecr.us-east-1.amazonaws.com/buildpack-php-builder:7.3
+        image: 855460960717.dkr.ecr.ap-southeast-2.amazonaws.com/buildpack-php-builder:7.3
         credentials:
           username: ${{ secrets.aws-access-key-id }}
           password: ${{ secrets.aws-secret-access-key }}

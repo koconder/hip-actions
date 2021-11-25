@@ -7,6 +7,8 @@ on:
         required: true
       aws-secret-access-key:
         required: true
+      ecr_password:
+        required: true
 
 jobs:
   dependency-cache:
@@ -31,15 +33,15 @@ jobs:
       - run: composer self-update && composer install --no-interaction --no-progress --prefer-dist --profile -d $(realpath $(eval echo ${PWD})/hip-shared)
         if: steps.composer-cache.outputs.cache-hit != 'true'
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.aws-access-key-id }}
-          aws-secret-access-key: ${{ secrets.aws-secret-access-key }}
-          aws-region: "ap-southeast-2"
+      # - name: Configure AWS credentials
+      #   uses: aws-actions/configure-aws-credentials@v1
+      #   with:
+      #     aws-access-key-id: ${{ secrets.aws-access-key-id }}
+      #     aws-secret-access-key: ${{ secrets.aws-secret-access-key }}
+      #     aws-region: "ap-southeast-2"
 
-      - name: Get AWS password
-        run: echo "AWS_PASSWORD=$(aws ecr get-login-password --region ap-southeast-2)" >> $GITHUB_ENV
+      # - name: Get AWS password
+      #   run: echo "AWS_PASSWORD=$(aws ecr get-login-password --region ap-southeast-2)" >> $GITHUB_ENV
 
     outputs:
       composer-cache: ${{ steps.composer-cache-dir.outputs.dir }}
@@ -67,7 +69,7 @@ jobs:
         image: 855460960717.dkr.ecr.ap-southeast-2.amazonaws.com/buildpack-php-builder:7.3
         credentials:
           username: AWS
-          password: ${{ env.AWS_PASSWORD }}
+          password: ${{ secrets.ecr_password }}
         env:
           APPLICATION_ENV: "docker"
           MEMCACHED_HOST: "127.0.0.1:11211"
@@ -96,7 +98,7 @@ jobs:
         image: 855460960717.dkr.ecr.ap-southeast-2.amazonaws.com/hipagesgroup/db-hip:master
         credentials:
           username: AWS
-          password: ${{ env.AWS_PASSWORD }}
+          password: ${{ secrets.ecr_password }}
         ports:
           - 3306:3306
       memcache:
@@ -131,7 +133,7 @@ jobs:
         image: 855460960717.dkr.ecr.ap-southeast-2.amazonaws.com/buildpack-php-builder:7.3
         credentials:
           username: AWS
-          password: ${{ env.AWS_PASSWORD }}
+          password: ${{ secrets.ecr_password }}
         env:
           APPLICATION_ENV: "docker"
           MEMCACHED_HOST: "127.0.0.1:11211"
@@ -160,7 +162,7 @@ jobs:
         image: 855460960717.dkr.ecr.ap-southeast-2.amazonaws.com/hipagesgroup/db-hip:master
         credentials:
           username: AWS
-          password: ${{ env.AWS_PASSWORD }}
+          password: ${{ secrets.ecr_password }}
         ports:
           - 3306:3306
       memcache:

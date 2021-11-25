@@ -51,36 +51,35 @@ jobs:
     runs-on: ubuntu-latest
     needs: dependency-cache
     container:
-      hip:
-        image: ghcr.io/hipagesgroup/buildpack-php-builder:7.3
-        options: "--entrypoint /bin/bash"
-        credentials:
-          username: ${{ github.actor }}
-          password: ${{ secrets.github_token }}
-        env:
-          APPLICATION_ENV: "docker"
-          MEMCACHED_HOST: "127.0.0.1:11211"
-          dbhost: 127.0.0.1
-          dbuser: hip
-          dbpass: Lpcn#94K3Mz
-          dbname: hip
-          dbname_slave_server: hip
-          database_central_params_host: 127.0.0.1
-          database_central_params_username: hip
-          database_central_params_password: Lpcn#94K3Mz
-          database_central_params_dbname: central
-          dbhost_licensing: 127.0.0.1
-          dbuser_licensing: hip
-          dbpass_licensing: Lpcn#94K3Mz
-          dbname_licensing: license
-          dbhost_message_hip: 127.0.0.1
-          dbuser_message_hip: hip
-          dbpass_message_hip: Lpcn#94K3Mz
-          dbname_message_hip: message_hip
-          dbhost_slave_server_central: 127.0.0.1
-          dbuser_slave_server_central: hip
-          dbpass_slave_server_central: Lpcn#94K3Mz
-          dbname_slave_server_central: central
+      image: ghcr.io/hipagesgroup/buildpack-php-builder:7.3
+      options: "--entrypoint /bin/bash"
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.github_token }}
+      env:
+        APPLICATION_ENV: "docker"
+        MEMCACHED_HOST: "127.0.0.1:11211"
+        dbhost: 127.0.0.1
+        dbuser: hip
+        dbpass: Lpcn#94K3Mz
+        dbname: hip
+        dbname_slave_server: hip
+        database_central_params_host: 127.0.0.1
+        database_central_params_username: hip
+        database_central_params_password: Lpcn#94K3Mz
+        database_central_params_dbname: central
+        dbhost_licensing: 127.0.0.1
+        dbuser_licensing: hip
+        dbpass_licensing: Lpcn#94K3Mz
+        dbname_licensing: license
+        dbhost_message_hip: 127.0.0.1
+        dbuser_message_hip: hip
+        dbpass_message_hip: Lpcn#94K3Mz
+        dbname_message_hip: message_hip
+        dbhost_slave_server_central: 127.0.0.1
+        dbuser_slave_server_central: hip
+        dbpass_slave_server_central: Lpcn#94K3Mz
+        dbname_slave_server_central: central
     services:
       db:
         image: ghcr.io/hipagesgroup/db-hip:master
@@ -118,36 +117,35 @@ jobs:
     runs-on: ubuntu-latest
     needs: dependency-cache
     container:
-      hip:
-        image: ghcr.io/hipagesgroup/buildpack-php-builder:7.3
-        options: "--entrypoint /bin/bash"
-        credentials:
-          username: ${{ github.actor }}
-          password: ${{ secrets.github_token }}
-        env:
-          APPLICATION_ENV: "docker"
-          MEMCACHED_HOST: "127.0.0.1:11211"
-          dbhost: 127.0.0.1
-          dbuser: hip
-          dbpass: Lpcn#94K3Mz
-          dbname: hip
-          dbname_slave_server: hip
-          database_central_params_host: 127.0.0.1
-          database_central_params_username: hip
-          database_central_params_password: Lpcn#94K3Mz
-          database_central_params_dbname: central
-          dbhost_licensing: 127.0.0.1
-          dbuser_licensing: hip
-          dbpass_licensing: Lpcn#94K3Mz
-          dbname_licensing: license
-          dbhost_message_hip: 127.0.0.1
-          dbuser_message_hip: hip
-          dbpass_message_hip: Lpcn#94K3Mz
-          dbname_message_hip: message_hip
-          dbhost_slave_server_central: 127.0.0.1
-          dbuser_slave_server_central: hip
-          dbpass_slave_server_central: Lpcn#94K3Mz
-          dbname_slave_server_central: central
+      image: ghcr.io/hipagesgroup/buildpack-php-builder:7.3
+      options: "--entrypoint /bin/bash"
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.github_token }}
+      env:
+        APPLICATION_ENV: "docker"
+        MEMCACHED_HOST: "127.0.0.1:11211"
+        dbhost: 127.0.0.1
+        dbuser: hip
+        dbpass: Lpcn#94K3Mz
+        dbname: hip
+        dbname_slave_server: hip
+        database_central_params_host: 127.0.0.1
+        database_central_params_username: hip
+        database_central_params_password: Lpcn#94K3Mz
+        database_central_params_dbname: central
+        dbhost_licensing: 127.0.0.1
+        dbuser_licensing: hip
+        dbpass_licensing: Lpcn#94K3Mz
+        dbname_licensing: license
+        dbhost_message_hip: 127.0.0.1
+        dbuser_message_hip: hip
+        dbpass_message_hip: Lpcn#94K3Mz
+        dbname_message_hip: message_hip
+        dbhost_slave_server_central: 127.0.0.1
+        dbuser_slave_server_central: hip
+        dbpass_slave_server_central: Lpcn#94K3Mz
+        dbname_slave_server_central: central
     services:
       db:
         image: ghcr.io/hipagesgroup/db-hip:master

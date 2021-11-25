@@ -55,6 +55,7 @@ jobs:
         with:
           path: jobs.dependency-cache.outputs.composer-cache
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+      - run: composer self-update && composer install --no-interaction --no-progress --prefer-dist --profile -d $(realpath $(eval echo ${PWD})/hip-shared)
       - run: hip-shared/vendor/bin/paratest --runner Runner \
               --configuration=hip-shared/tests/phpunit.xml \
               --coverage-php=/tmp/coverage/Unit.cov \
@@ -67,8 +68,6 @@ jobs:
     services:
       hip:
         image: ghcr.io/hipagesgroup/buildpack-php-builder:7.3
-        volumes:
-          - jobs.dependency-cache.outputs.composer-cache:jobs.dependency-cache.outputs.composer-cache
         credentials:
           username: ${{ github.actor }}
           password: ${{ secrets.github_token }}
@@ -119,7 +118,7 @@ jobs:
         with:
           path: jobs.dependency-cache.outputs.composer-cache
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-      
+      - run: composer self-update && composer install --no-interaction --no-progress --prefer-dist --profile -d $(realpath $(eval echo ${PWD})/hip-shared)
       - run: hip-shared/vendor/bin/phpunit \
               --configuration=hip-shared/tests/phpunit.xml \
               --coverage-php=/tmp/coverage/Integration.cov \

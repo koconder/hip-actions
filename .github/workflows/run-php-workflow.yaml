@@ -50,7 +50,7 @@ jobs:
   run-unit-tests:
     runs-on: ubuntu-latest
     needs: dependency-cache
-    services:
+    container:
       hip:
         image: ghcr.io/hipagesgroup/buildpack-php-builder:7.3
         options: "--entrypoint /bin/bash"
@@ -81,6 +81,7 @@ jobs:
           dbuser_slave_server_central: hip
           dbpass_slave_server_central: Lpcn#94K3Mz
           dbname_slave_server_central: central
+    services:
       db:
         image: ghcr.io/hipagesgroup/db-hip:master
         credentials:
@@ -116,8 +117,7 @@ jobs:
   run-integration-tests:
     runs-on: ubuntu-latest
     needs: dependency-cache
-
-    services:
+    container:
       hip:
         image: ghcr.io/hipagesgroup/buildpack-php-builder:7.3
         options: "--entrypoint /bin/bash"
@@ -148,6 +148,7 @@ jobs:
           dbuser_slave_server_central: hip
           dbpass_slave_server_central: Lpcn#94K3Mz
           dbname_slave_server_central: central
+    services:
       db:
         image: ghcr.io/hipagesgroup/db-hip:master
         credentials:

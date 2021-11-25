@@ -56,27 +56,29 @@ jobs:
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.github_token }}
+      volumes:
+        - ${{ env.GITHUB_WORKSPACE }}:${{ env.GITHUB_WORKSPACE }}
       env:
         APPLICATION_ENV: "docker"
-        MEMCACHED_HOST: "127.0.0.1:11211"
-        dbhost: 127.0.0.1
+        MEMCACHED_HOST: "memcache:11211"
+        dbhost: db
         dbuser: hip
         dbpass: Lpcn#94K3Mz
         dbname: hip
         dbname_slave_server: hip
-        database_central_params_host: 127.0.0.1
+        database_central_params_host: db
         database_central_params_username: hip
         database_central_params_password: Lpcn#94K3Mz
         database_central_params_dbname: central
-        dbhost_licensing: 127.0.0.1
+        dbhost_licensing: db
         dbuser_licensing: hip
         dbpass_licensing: Lpcn#94K3Mz
         dbname_licensing: license
-        dbhost_message_hip: 127.0.0.1
+        dbhost_message_hip: db
         dbuser_message_hip: hip
         dbpass_message_hip: Lpcn#94K3Mz
         dbname_message_hip: message_hip
-        dbhost_slave_server_central: 127.0.0.1
+        dbhost_slave_server_central: db
         dbuser_slave_server_central: hip
         dbpass_slave_server_central: Lpcn#94K3Mz
         dbname_slave_server_central: central
@@ -119,6 +121,8 @@ jobs:
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.github_token }}
+      volumes:
+        - ${{ env.GITHUB_WORKSPACE }}:${{ env.GITHUB_WORKSPACE }}
       env:
         APPLICATION_ENV: "docker"
         MEMCACHED_HOST: "memcache:11211"

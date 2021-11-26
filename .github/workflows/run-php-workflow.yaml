@@ -10,6 +10,9 @@ on:
       github_token:
         required: true
 
+# permissions:
+  
+
 jobs:
   dependency-cache:
     runs-on: ubuntu-latest
@@ -48,11 +51,10 @@ jobs:
       composer-cache: ${{ steps.composer-cache-dir.outputs.dir }}
   
   run-unit-tests:
-    # permissions: write-all
     runs-on: ubuntu-latest
     needs: dependency-cache
     container:
-      image: ghcr.io/hipagesgroup/buildpack-php-builder:7.3
+      image: ghcr.io/hipagesgroup/buildpack-php-builder:7.4
       options: "--entrypoint /bin/bash"
       credentials:
         username: ${{ github.actor }}
@@ -114,11 +116,10 @@ jobs:
     
 
   run-integration-tests:
-    # permissions: write-all
     runs-on: ubuntu-latest
     needs: dependency-cache
     container:
-      image: ghcr.io/hipagesgroup/buildpack-php-builder:7.3
+      image: ghcr.io/hipagesgroup/buildpack-php-builder:7.4
       options: "--entrypoint /bin/bash"
       credentials:
         username: ${{ github.actor }}

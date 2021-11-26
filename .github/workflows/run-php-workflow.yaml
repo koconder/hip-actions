@@ -10,9 +10,6 @@ on:
       github_token:
         required: true
 
-permissions: write-all
-  
-
 jobs:
   dependency-cache:
     runs-on: ubuntu-latest
@@ -54,7 +51,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: dependency-cache
     container:
-      image: ghcr.io/hipagesgroup/buildpack-php-builder:7.4
+      image: ghcr.io/hipagesgroup/buildpack-php-builder:7.3
       options: "--entrypoint /bin/bash"
       credentials:
         username: ${{ github.actor }}
@@ -119,7 +116,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: dependency-cache
     container:
-      image: ghcr.io/hipagesgroup/buildpack-php-builder:7.4
+      image: ghcr.io/hipagesgroup/buildpack-php-builder:7.3
       options: "--entrypoint /bin/bash"
       credentials:
         username: ${{ github.actor }}

@@ -49,7 +49,7 @@ jobs:
   
   run-unit-tests:
     permissions:
-      packages: read|write
+      packages: write-all
     runs-on: ubuntu-latest
     needs: dependency-cache
     container:
@@ -116,7 +116,7 @@ jobs:
 
   run-integration-tests:
     permissions:
-      packages: read|write
+      packages: write-all
     runs-on: ubuntu-latest
     needs: dependency-cache
     container:

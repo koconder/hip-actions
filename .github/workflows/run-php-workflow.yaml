@@ -10,7 +10,7 @@ on:
       github_token:
         required: true
 
-# permissions:
+permissions: write-all
   
 
 jobs:

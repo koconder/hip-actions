@@ -48,7 +48,7 @@ jobs:
       composer-cache: ${{ steps.composer-cache-dir.outputs.dir }}
   
   run-unit-tests:
-    permissions: write-all
+    # permissions: write-all
     runs-on: ubuntu-latest
     needs: dependency-cache
     container:
@@ -114,7 +114,7 @@ jobs:
     
 
   run-integration-tests:
-    permissions: write-all
+    # permissions: write-all
     runs-on: ubuntu-latest
     needs: dependency-cache
     container:

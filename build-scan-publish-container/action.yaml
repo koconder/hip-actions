@@ -64,6 +64,7 @@ runs:
       run: |
         rm -rf /tmp/.buildx-cache
         mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+      shell: bash
     
     # - name: Container scan
     #   uses: Azure/container-scan@v0

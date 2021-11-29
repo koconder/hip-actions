@@ -11,3 +11,8 @@ runs:
     - run: echo Placeholder for code coverage upload
       shell: bash
 
+    - name: Upload test coverage files
+      uses: actions/upload-artifact@v2
+      with:
+        name: coverage
+        path: coverage/

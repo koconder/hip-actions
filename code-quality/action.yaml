@@ -19,3 +19,7 @@ runs:
       with:
         name: coverage
         path: coverage/
+
+    - name: Check quality gate
+      run: echo "Wait for quality gate to pass"
+      if: ${{ inputs.wait }}

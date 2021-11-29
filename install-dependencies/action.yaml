@@ -1,5 +1,5 @@
-name: ci
-description: Setup CI parameters
+name: install-dependencies
+description: Install package dependencies and use cache
 
 inputs:
   language:
@@ -12,17 +12,11 @@ inputs:
   install:
     required: true
 
-outputs:
-  cache-hit:
-    description: Cache hit or not
-    value: ${{ steps.login-ecr.outputs.registry }}/${{ github.repository }}:${{ github.sha }}
-
 runs:
   using: "composite"
   steps:
 
-### NodeJS stuff
-
+### NodeJS 
     - uses: actions/setup-node@v2
       if: ${{ inputs.language == 'node' }}
       id: setup
@@ -39,8 +33,7 @@ runs:
       shell: bash
     
 
-  ### PHP stuff
-
+  ### PHP 
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       if: ${{ inputs.language == 'php' }}
@@ -67,8 +60,7 @@ runs:
       if: steps.composer-cache.outputs.cache-hit != 'true' && ${{ inputs.language == 'php' }}
       shell: bash
 
-  ### Python stuff
-
+  ### Python
     - uses: actions/setup-python@v2
       if: ${{ inputs.language == 'python' }}
       with:

@@ -9,6 +9,8 @@ inputs:
     required: true
   cache:
     required: true
+  install:
+    required: true
 
 outputs:
   cache-hit:
@@ -20,10 +22,12 @@ runs:
   steps:
 
     - uses: actions/setup-node@v2
+      id: setup
       with:
         node-version: ${{ inputs.version }}
         cache: ${{ inputs.cache }}
     - run: ${{ inputs.install }}
+      if: steps.setup.outputs.cache-hit != 'true'
       shell: bash
     # - name: Get Composer Cache Directory
     #   if: ${{ inputs.language == 'php' }}

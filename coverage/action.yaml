@@ -9,4 +9,5 @@ runs:
   using: "composite"
   steps:
     - run: echo Placeholder for code coverage upload
+      shell: bash
 

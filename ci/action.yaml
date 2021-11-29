@@ -52,6 +52,7 @@ runs:
       id: composer-cache-dir
       run: |
         echo "::set-output name=dir::$(composer config cache-files-dir)"
+      shell: bash
 
     - uses: actions/cache@v2
       if: ${{ inputs.language == 'php' }}
@@ -64,6 +65,7 @@ runs:
 
     - run: ${{ inputs.install }}
       if: steps.composer-cache.outputs.cache-hit != 'true' && ${{ inputs.language == 'php' }}
+      shell: bash
 
   ### Python stuff
 
@@ -74,4 +76,5 @@ runs:
         cache: ${{ inputs.cache }}
     - run: ${{ inputs.install }}
       if: ${{ inputs.language == 'python' }}
+      shell: bash
 

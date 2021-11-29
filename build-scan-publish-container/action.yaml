@@ -13,9 +13,12 @@ inputs:
     required: true
 
 outputs:
-  ecr_repository:
-    description: ECR Respository of the newly built image
-    value: ${{ steps.login-ecr.outputs.registry }}/${{ github.repository }}:${{ github.sha }}
+  container_repository:
+    description: Respository of the newly built image
+    value: ${{ steps.login-ecr.outputs.registry }}/${{ github.repository }}
+  container_tag:
+    description: Tag of the newly built image
+    value: ${{ github.sha }}
 
 runs:
   using: "composite"
@@ -52,7 +55,5 @@ runs:
     #   uses: Azure/container-scan@v0
     #   with:
     #     image-name: ${{ steps.login-ecr.outputs.registry }}/${{ github.repository }}:${{ github.sha }}
-  outputs:
-    container_repository: ${{ steps.login-ecr.outputs.registry }}/${{ github.repository }}
-    container_tag: ${{ github.sha }}
+
 

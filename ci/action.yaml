@@ -21,43 +21,57 @@ runs:
   using: "composite"
   steps:
 
+### NodeJS stuff
+
     - uses: actions/setup-node@v2
+      if: ${{ inputs.language == 'node' }}
       id: setup
       with:
         node-version: ${{ inputs.version }}
         cache: ${{ inputs.cache }}
-    - run: ${{ inputs.install }}
-      if: steps.setup.outputs.cache-hit != 'true'
-      shell: bash
-    # - name: Get Composer Cache Directory
-    #   if: ${{ inputs.language == 'php' }}
-    #   id: composer-cache
-    #   run: |
-    #     echo "::set-output name=dir::$(composer config cache-files-dir)"
-    #   shell: bash
-    # - uses: actions/cache@v2
-    #   if: ${{ inputs.language == 'php' }}
-    #   with:
-    #     path: ${{ steps.composer-cache.outputs.dir }}
-    #     key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-    #     restore-keys: |
-    #       ${{ runner.os }}-composer-
-    # - run: composer install --no-interaction --no-progress --prefer-dist --profile
-    #   shell: bash
-    #   if: ${{ inputs.language == 'php' }}
 
+    - run: grep -q @hipagesgroup yarn.lock && echo //npm.pkg.github.com/:_authToken=$GITHUB_TOKEN >> .npmrc || true
+      if: ${{ inputs.language == 'node' }}
+      shell: bash
+
+    - run: ${{ inputs.install }}
+      if: ${{ inputs.language == 'node' }}
+      shell: bash
     
-    # - uses: actions/setup-node@v2
-    #   if: ${{ inputs.language == 'node' }}
-    #   with:
-    #     node-version: ${{ inputs.version }}
-    # - uses: actions/cache@v2
-    #   if: ${{ inputs.language == 'node' }}
-    #   id: cache-node-modules
-    #   with:
-    #     path: node_modules
-    #     key: node-modules-${{ hashFiles('package-lock.json') }}
-    # - run: yarn install
-    #   if: steps.cache-node-modules.outputs.cache-hit != 'true' && ${{ inputs.language == 'node' }}
-    #   shell: bash
+
+  ### PHP stuff
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      if: ${{ inputs.language == 'php' }}
+      with:
+        php-version: ${{ inputs.version }}
+
+    - name: Get Composer Cache Directory
+      if: ${{ inputs.language == 'php' }}
+      id: composer-cache-dir
+      run: |
+        echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+    - uses: actions/cache@v2
+      if: ${{ inputs.language == 'php' }}
+      id: composer-cache
+      with:
+        path: ${{ steps.composer-cache-dir.outputs.dir }}
+        key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-composer-
+
+    - run: ${{ inputs.install }}
+      if: steps.composer-cache.outputs.cache-hit != 'true' && ${{ inputs.language == 'php' }}
+
+  ### Python stuff
+
+    - uses: actions/setup-python@v2
+      if: ${{ inputs.language == 'python' }}
+      with:
+        python-version: ${{ inputs.version }}
+        cache: ${{ inputs.cache }}
+    - run: ${{ inputs.install }}
+      if: ${{ inputs.language == 'python' }}
 

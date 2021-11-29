@@ -1,0 +1,12 @@
+name: coverage
+description: Merge and upload code coverage
+
+inputs:
+  files:
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - run: echo Placeholder for code coverage upload
+

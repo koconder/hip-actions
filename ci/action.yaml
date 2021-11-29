@@ -24,6 +24,7 @@ runs:
         node-version: ${{ inputs.version }}
         cache: ${{ inputs.cache }}
     - run: ${{ inputs.install }}
+      shell: bash
     # - name: Get Composer Cache Directory
     #   if: ${{ inputs.language == 'php' }}
     #   id: composer-cache

@@ -47,8 +47,8 @@ runs:
         file: ./Dockerfile
         pull: true
         push: true
-        cache-from: type=registry,ref=${{ steps.login-ecr.outputs.registry }}/${{ github.repository }}:latest
-        cache-to: type=registry,ref=${{ steps.login-ecr.outputs.registry }}/${{ github.repository }}:latest,mode=max
+        cache-from: type=gha, scope=${{ github.repository }}
+        cache-to: type=gha,scope=${{ github.repository }},mode=max
         tags: ${{ steps.login-ecr.outputs.registry }}/${{ github.repository }}:${{ github.sha }}
     
     # - name: Container scan

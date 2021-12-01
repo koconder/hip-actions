@@ -52,6 +52,12 @@ runs:
         ${{ inputs.test_execution_report_files }}
         EOF
         )
+        echo "Testing first argument"
+        echo $coverageReportPaths |& grep "\S"
+        echo "Testing second argument"
+        echo $coverageReportPaths |& grep "\S" |& tr "\n" ","
+        echo "Testing third argument"
+        echo $coverageReportPaths |& grep "\S" |& tr "\n" "," |& tr -d " "
         echo "::set-output name=coverageReportPaths::$( echo $coverageReportPaths |& grep "\S" |& tr "\n" "," |& tr -d " ")"
         echo "::set-output name=testExecutionReportPaths::$( echo $testExecutionReportPaths |& grep "\S" |& tr "\n" "," |& tr -d " ")"
       shell: bash

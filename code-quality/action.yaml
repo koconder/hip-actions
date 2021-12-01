@@ -54,7 +54,6 @@ runs:
             -Dsonar.coverage.exclusions="**/*.spec.ts,**/*.test.ts,test/**" \
             -Dsonar.test.inclusions="**/*.spec.ts,**/*.test.ts" \
             -Dsonar.sources=.
-      shell: bash
 
     - name: Check quality gate
       run: echo "Wait for quality gate to pass"

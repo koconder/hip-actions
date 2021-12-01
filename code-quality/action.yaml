@@ -47,10 +47,9 @@ runs:
     - name: Parse test files
       run: |
         echo "Coverage files: "
-        echo ${{ inputs.coverage_files }}
+        echo "${{ inputs.coverage_files }}"
         echo "Execution files: "
-        echo ${{ inputs.test_execution_report_files }}
-        
+        echo "${{ inputs.test_execution_report_files }}"
       shell: bash
 
     - name: Run sonarqube

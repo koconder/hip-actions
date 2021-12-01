@@ -45,8 +45,8 @@ runs:
       id: parse-report-files
       run: |
         echo "Setting vars: "
-        var1=$(echo ${{ inputs.coverage_files }})
-        var2=$(echo ${{ inputs.test_execution_report_files }})
+        var1=$(${{ inputs.coverage_files }})
+        var2=$(${{ inputs.test_execution_report_files }})
         echo "Vars:"
         echo "var1:"
         echo $var1

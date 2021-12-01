@@ -44,8 +44,16 @@ runs:
     - name: Parse test files
       id: parse-report-files
       run: |
-        coverageReportPaths=$(echo ${{ inputs.coverage_files }} | tr "\n" "," | sed -e s/,$//)
-        testExecutionReportPaths=$(echo ${{ inputs.test_execution_report_files }} | tr "\n" "," | sed -e s/,$//)
+        echo "Setting vars: "
+        var1=$(echo ${{ inputs.coverage_files }})
+        var2=$(echo ${{ inputs.test_execution_report_files }})
+        echo "Vars:"
+        echo "var1:"
+        echo $var1
+        echo "Var2:"
+        echo $var2
+        coverageReportPaths=$(echo $var1 | tr "\n" "," | sed -e s/,$//)
+        testExecutionReportPaths=$(echo $var2 | tr "\n" "," | sed -e s/,$//)
         echo "::set-output name=coverageReportPaths::$( echo $coverageReportPaths )"
         echo "::set-output name=testExecutionReportPaths::$( echo $testExecutionReportPaths )"
       shell: bash

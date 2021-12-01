@@ -19,9 +19,6 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - run: echo "Placeholder for qualiry check"
-      shell: bash
-
     - name: Download test coverage data
       uses: actions/download-artifact@v2
       with:
@@ -45,11 +42,10 @@ runs:
       uses: warchant/setup-sonar-scanner@v3
 
     - name: Parse test files
+      id: parse-report-files
       run: |
-        echo "Coverage files: "
-        echo "${{ inputs.coverage_files }}"
-        echo "Execution files: "
-        echo "${{ inputs.test_execution_report_files }}"
+        echo "::set-output name=coverageReportPaths::$(echo ${{ inputs.coverage_files }} | tr "\n" "," | sed -e s/,$// )"
+        echo "::set-output name=testExecutionReportPaths::$(echo ${{ inputs.test_execution_report_files }} | tr "\n" "," | sed -e s/,$// )"
       shell: bash
 
     - name: Run sonarqube
@@ -63,18 +59,13 @@ runs:
             -Dsonar.login="${{ inputs.sonar_token }}" \
             -Dsonar.projectVersion="${GITHUB_SHA}" \
             -Dsonar.links.scm="https://github.com/${GITHUB_REPOSITORY}" \
-            -Dsonar.coverageReportPaths="" \
-            -Dsonar.testExecutionReportPaths="" \
-            -Dsonar.coverage.exclusions="**/*.spec.ts,**/*.test.ts,test/**" \
-            -Dsonar.test.inclusions="**/*.spec.ts,**/*.test.ts" \
+            -Dsonar.coverageReportPaths="${{ steps.parse-report-files.outputs.coverageReportPaths}}" \
+            -Dsonar.testExecutionReportPaths="${{ steps.parse-report-files.outputs.testExecutionReportPaths}}" \
             -Dsonar.sources=.
       shell: bash
 
     - name: Check quality gate
       uses: sonarsource/sonarqube-quality-gate-action@master
-      # Force to fail step after specific time
-      with:
-        timeout-minutes: 5
       env:
        SONAR_TOKEN: ${{ inputs.sonar_token }}
       if: ${{ inputs.wait }}

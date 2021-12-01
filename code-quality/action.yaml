@@ -59,6 +59,9 @@ runs:
       shell: bash
 
     - name: Check quality gate
-      run: echo "Wait for quality gate to pass"
+      uses: sonarsource/sonarqube-quality-gate-action@master
+      # Force to fail step after specific time
+      timeout-minutes: 5
+      env:
+       SONAR_TOKEN: ${{ inputs.sonar_token }}
       if: ${{ inputs.wait }}
-      shell: bash

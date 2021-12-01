@@ -44,8 +44,10 @@ runs:
     - name: Parse test files
       id: parse-report-files
       run: |
-        echo "::set-output name=coverageReportPaths::$(echo ${{ inputs.coverage_files }} | tr "\n" "," | sed -e s/,$// )"
-        echo "::set-output name=testExecutionReportPaths::$(echo ${{ inputs.test_execution_report_files }} | tr "\n" "," | sed -e s/,$// )"
+        coverageReportPaths=$(echo ${{ inputs.coverage_files }} | tr "\n" "," | sed -e s/,$//)
+        testExecutionReportPaths=$(echo ${{ inputs.test_execution_report_files }} | tr "\n" "," | sed -e s/,$//)
+        echo "::set-output name=coverageReportPaths::$( echo $coverageReportPaths )"
+        echo "::set-output name=testExecutionReportPaths::$( echo $testExecutionReportPaths )"
       shell: bash
 
     - name: Run sonarqube

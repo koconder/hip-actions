@@ -38,6 +38,9 @@ runs:
       run: npm install typescript
       shell: bash
 
+    - name: Setup sonarqube
+      uses: warchant/setup-sonar-scanner@v3
+
     - name: Run sonarqube
       env:
         # to get access to secrets.SONAR_TOKEN, provide GITHUB_TOKEN
@@ -54,6 +57,7 @@ runs:
             -Dsonar.coverage.exclusions="**/*.spec.ts,**/*.test.ts,test/**" \
             -Dsonar.test.inclusions="**/*.spec.ts,**/*.test.ts" \
             -Dsonar.sources=.
+      shell: bash
 
     - name: Check quality gate
       run: echo "Wait for quality gate to pass"

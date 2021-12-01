@@ -5,7 +5,9 @@ inputs:
   wait:
     required: false
     default: true
-  coverage:
+  coverage_files:
+    required: true
+  test_execution_report_files:
     required: true
   sonar_server:
     required: true
@@ -25,7 +27,8 @@ runs:
       with:
         name: coverage
         path: |
-          ${{ inputs.coverage }}
+          ${{ inputs.coverage_files }}
+          ${{ inputs.test_execution_report_files }}
 
     - uses: FranzDiebold/github-env-vars-action@v2
 
@@ -41,6 +44,15 @@ runs:
     - name: Setup sonarqube
       uses: warchant/setup-sonar-scanner@v3
 
+    - name: Parse test files
+      run: |
+        echo "Coverage files: "
+        echo ${{ inputs.coverage_files }}
+        echo "Execution files: "
+        echo ${{ inputs.test_execution_report_files }}
+        
+      shell: bash
+
     - name: Run sonarqube
       env:
         # to get access to secrets.SONAR_TOKEN, provide GITHUB_TOKEN
@@ -52,7 +64,8 @@ runs:
             -Dsonar.login="${{ inputs.sonar_token }}" \
             -Dsonar.projectVersion="${GITHUB_SHA}" \
             -Dsonar.links.scm="https://github.com/${GITHUB_REPOSITORY}" \
-            -Dsonar.javascript.lcov.reportPaths="coverage/lcov.info" \
+            -Dsonar.coverageReportPaths="" \
+            -Dsonar.testExecutionReportPaths="" \
             -Dsonar.coverage.exclusions="**/*.spec.ts,**/*.test.ts,test/**" \
             -Dsonar.test.inclusions="**/*.spec.ts,**/*.test.ts" \
             -Dsonar.sources=.

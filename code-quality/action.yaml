@@ -7,6 +7,12 @@ inputs:
     default: true
   coverage:
     required: true
+  sonar_server:
+    required: true
+  sonar_token:
+    required: true
+  github_token:
+    required: true
 
 runs:
   using: "composite"
@@ -18,7 +24,35 @@ runs:
       uses: actions/download-artifact@v2
       with:
         name: coverage
-        path: coverage/
+        path: |
+          ${{ inputs.coverage }}
+
+    - uses: FranzDiebold/github-env-vars-action@v2
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v2
+      with:
+        node-version: 14.x
+
+    - name: Install Typescript
+      run: npm install typescript
+
+    - name: Run sonarqube
+      env:
+        # to get access to secrets.SONAR_TOKEN, provide GITHUB_TOKEN
+        GITHUB_TOKEN: "${{ inputs.GITHUB_TOKEN }}"
+      run: |
+        sonar-scanner \
+            -Dsonar.projectKey="${CI_REPOSITORY_NAME_SLUG}" \
+            -Dsonar.host.url="${{ inputs.sonar_server }}" \
+            -Dsonar.login="${{ inputs.sonar_token }}" \
+            -Dsonar.projectVersion="${GITHUB_SHA}" \
+            -Dsonar.links.scm="https://github.com/${GITHUB_REPOSITORY}" \
+            -Dsonar.javascript.lcov.reportPaths="coverage/lcov.info" \
+            -Dsonar.testExecutionReportPaths="coverage/test-report.xml" \
+            -Dsonar.coverage.exclusions="**/*.spec.ts,**/*.test.ts,test/**" \
+            -Dsonar.test.inclusions="**/*.spec.ts,**/*.test.ts" \
+            -Dsonar.sources=.
 
     - name: Check quality gate
       run: echo "Wait for quality gate to pass"

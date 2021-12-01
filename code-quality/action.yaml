@@ -53,7 +53,6 @@ runs:
             -Dsonar.projectVersion="${GITHUB_SHA}" \
             -Dsonar.links.scm="https://github.com/${GITHUB_REPOSITORY}" \
             -Dsonar.javascript.lcov.reportPaths="coverage/lcov.info" \
-            -Dsonar.testExecutionReportPaths="coverage/clover.xml" \
             -Dsonar.coverage.exclusions="**/*.spec.ts,**/*.test.ts,test/**" \
             -Dsonar.test.inclusions="**/*.spec.ts,**/*.test.ts" \
             -Dsonar.sources=.

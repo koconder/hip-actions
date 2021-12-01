@@ -44,18 +44,16 @@ runs:
     - name: Parse test files
       id: parse-report-files
       run: |
-        echo "Setting vars: "
-        var1=$(${{ inputs.coverage_files }})
-        var2=$(${{ inputs.test_execution_report_files }})
-        echo "Vars:"
-        echo "var1:"
-        echo $var1
-        echo "Var2:"
-        echo $var2
-        coverageReportPaths=$(echo $var1 | tr "\n" "," | sed -e s/,$//)
-        testExecutionReportPaths=$(echo $var2 | tr "\n" "," | sed -e s/,$//)
-        echo "::set-output name=coverageReportPaths::$( echo $coverageReportPaths )"
-        echo "::set-output name=testExecutionReportPaths::$( echo $testExecutionReportPaths )"
+        coverageReportPaths=$(cat << EOF
+        ${{ inputs.coverage_files }}
+        EOF
+        )
+        testExecutionReportPaths=$(cat << EOF
+        ${{ inputs.test_execution_report_files }}
+        EOF
+        )
+        echo "::set-output name=coverageReportPaths::$( echo $coverageReportPaths | tr "\n" "," | sed -e s/,$//)"
+        echo "::set-output name=testExecutionReportPaths::$( echo $testExecutionReportPaths | tr "\n" "," | sed -e s/,$//)"
       shell: bash
 
     - name: Run sonarqube

@@ -18,7 +18,7 @@ outputs:
   container_repository:
     description: Respository of the newly built image
     #value: ${{ steps.login-ecr.outputs.registry }}/${{ github.repository }}
-    values: "test"
+    value: "test"
   container_tag:
     description: Tag of the newly built image
     #value: ${{ github.sha }}

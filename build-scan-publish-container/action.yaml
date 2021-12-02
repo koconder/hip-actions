@@ -17,10 +17,12 @@ inputs:
 outputs:
   container_repository:
     description: Respository of the newly built image
-    value: ${{ steps.login-ecr.outputs.registry }}/${{ github.repository }}
+    #value: ${{ steps.login-ecr.outputs.registry }}/${{ github.repository }}
+    values: "test"
   container_tag:
     description: Tag of the newly built image
-    value: ${{ github.sha }}
+    #value: ${{ github.sha }}
+    value: "test"
 
 runs:
   using: "composite"
@@ -28,16 +30,16 @@ runs:
     - name: Checkout
       uses: actions/checkout@v2
     
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ inputs.aws-access-key-id }}
-        aws-secret-access-key: ${{ inputs.aws-secret-access-key }}
-        aws-region: ${{ inputs.aws-region }}
+    # - name: Configure AWS credentials
+    #   uses: aws-actions/configure-aws-credentials@v1
+    #   with:
+    #     aws-access-key-id: ${{ inputs.aws-access-key-id }}
+    #     aws-secret-access-key: ${{ inputs.aws-secret-access-key }}
+    #     aws-region: ${{ inputs.aws-region }}
 
-    - name: Login to Amazon ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v1
+    # - name: Login to Amazon ECR
+    #   id: login-ecr
+    #   uses: aws-actions/amazon-ecr-login@v1
 
     - name: Log in to Github Container registry
       uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
@@ -57,16 +59,16 @@ runs:
     #     restore-keys: |
     #       ${{ runner.os }}-buildx-
 
-    - name: Build, tag, and push image ECR
-      uses: docker/build-push-action@v2
-      with:
-        context: .
-        file: ./Dockerfile
-        pull: false
-        push: true
-        cache-from: type=gha
-        cache-to: type=gha,mode=max
-        tags: ${{ steps.login-ecr.outputs.registry }}/${{ github.repository }}:latest,${{ steps.login-ecr.outputs.registry }}/${{ github.repository }}:${{ github.sha }}
+    # - name: Build, tag, and push image ECR
+    #   uses: docker/build-push-action@v2
+    #   with:
+    #     context: .
+    #     file: ./Dockerfile
+    #     pull: false
+    #     push: true
+    #     cache-from: type=gha
+    #     cache-to: type=gha,mode=max
+    #     tags: ${{ steps.login-ecr.outputs.registry }}/${{ github.repository }}:latest,${{ steps.login-ecr.outputs.registry }}/${{ github.repository }}:${{ github.sha }}
 
     - name: Build, tag, and push image GHCR
       uses: docker/build-push-action@v2

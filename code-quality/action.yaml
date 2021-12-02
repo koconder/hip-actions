@@ -78,7 +78,7 @@ runs:
         # to get access to secrets.SONAR_TOKEN, provide GITHUB_TOKEN
         GITHUB_TOKEN: "${{ inputs.GITHUB_TOKEN }}"
       run: |
-        ls -l && sonar-scanner \
+          sonar-scanner \
             -Dsonar.projectKey="${CI_REPOSITORY_NAME_SLUG}" \
             -Dsonar.host.url="${{ inputs.sonar_server }}" \
             -Dsonar.login="${{ inputs.sonar_token }}" \

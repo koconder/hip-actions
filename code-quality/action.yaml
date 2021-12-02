@@ -16,6 +16,8 @@ inputs:
     required: true
   github_token:
     required: true
+  path:
+    required: true
 
 runs:
   using: "composite"
@@ -24,6 +26,7 @@ runs:
       uses: actions/download-artifact@v2
       with:
         name: coverage
+        path: ${{ inputs.path }}
 
 
     - uses: FranzDiebold/github-env-vars-action@v2
@@ -68,8 +71,8 @@ runs:
         echo "Current root"
         pwd
         ls -l /home/runner/work/marketplace/marketplace/coverage/lcov.info
-        echo "::set-output name=coverageReportPaths::$( echo $coverageReportPaths |&  grep "\S" |& tr " " "," |& tr -d " ")"
-        echo "::set-output name=testExecutionReportPaths::$( echo $testExecutionReportPaths |&  grep "\S" |& tr " " "," |& tr -d " ")"
+        echo "::set-output name=coverageReportPaths::$( echo $coverageReportPaths |&  grep "\S" |& tr " " "," |& sed -e s/^/${{inputs.path }}/ |& tr -d " ")"
+        echo "::set-output name=testExecutionReportPaths::$( echo $testExecutionReportPaths |&  grep "\S" |& tr " " "," |& sed -e s/^/${{ inputs.path }}/ |& tr -d " ")"
       shell: bash
 
     - name: Run sonarqube

@@ -71,7 +71,7 @@ runs:
         echo "Current root"
         pwd
         ls -l /home/runner/work/marketplace/marketplace/coverage/lcov.info
-        echo "::set-output name=coverageReportPaths::$( echo $coverageReportPaths |&  grep "\S" |& tr " " "," |& sed -e s/^/${{inputs.path }}/ |& tr -d " ")"
+        echo "::set-output name=coverageReportPaths::$( echo $coverageReportPaths |&  grep "\S" |& tr " " "," |& sed -e s/^/${{inputs.path }}\/ |& tr -d " ")"
         echo "::set-output name=testExecutionReportPaths::$( echo $testExecutionReportPaths |&  grep "\S" |& tr " " "," |& sed -e s/^/${{ inputs.path }}/ |& tr -d " ")"
       shell: bash
 

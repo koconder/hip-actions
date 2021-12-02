@@ -64,7 +64,10 @@ runs:
         echo "Listing directories: "
         ls 
         echo "listing coverage: "
-        ls coverage
+        ls -l coverage/*
+        echo "Listing parent"
+        ls ../
+        echo "Current root"
         pwd
         ls -l /home/runner/work/marketplace/marketplace/coverage/lcov.info
         echo "::set-output name=coverageReportPaths::$( echo $coverageReportPaths |&  grep "\S" |& tr " " "," |& tr -d " ")"
@@ -76,7 +79,7 @@ runs:
         # to get access to secrets.SONAR_TOKEN, provide GITHUB_TOKEN
         GITHUB_TOKEN: "${{ inputs.GITHUB_TOKEN }}"
       run: |
-        sonar-scanner \
+        ls -l && sonar-scanner \
             -Dsonar.projectKey="${CI_REPOSITORY_NAME_SLUG}" \
             -Dsonar.host.url="${{ inputs.sonar_server }}" \
             -Dsonar.login="${{ inputs.sonar_token }}" \

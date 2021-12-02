@@ -56,15 +56,17 @@ runs:
         echo "First echo:"
         echo $coverageReportPaths
         echo "Second echo:"
-        echo $coverageReportPaths |& xargs -n1 basename
-        echo "Third echo:"
-        echo $coverageReportPaths |& xargs -n1 basename |& grep "\S"
+        echo $coverageReportPaths |& grep "\S"
         echo "fourth echo"
-        echo $coverageReportPaths |& xargs -n1 basename |& grep "\S" |& tr "\n" ","
+        echo $coverageReportPaths |&  grep "\S" |& tr " " ","
         echo "last echo: "
-        echo $coverageReportPaths |& xargs -n1 basename |& grep "\S" |& tr "\n" "," |& tr -d " "
-        echo "::set-output name=coverageReportPaths::$( echo $coverageReportPaths |& xargs -n1 basename |& grep "\S" |& tr "\n" "," |& tr -d " ")"
-        echo "::set-output name=testExecutionReportPaths::$( echo $testExecutionReportPaths |& xargs -n1 basename |& grep "\S" |& tr "\n" "," |& tr -d " ")"
+        echo $coverageReportPaths |& grep "\S" |& tr " " "," |& tr -d " "
+        echo "Listing directories: "
+        ls 
+        echo "listing coverage: "
+        ls coverage
+        echo "::set-output name=coverageReportPaths::$( echo $coverageReportPaths |&  grep "\S" |& tr " " "," |& tr -d " ")"
+        echo "::set-output name=testExecutionReportPaths::$( echo $testExecutionReportPaths |&  grep "\S" |& tr " " "," |& tr -d " ")"
       shell: bash
 
     - name: Run sonarqube

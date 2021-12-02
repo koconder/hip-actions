@@ -11,6 +11,8 @@ inputs:
   aws-region:
     description: AWS Region
     required: true
+  github-token:
+    required: true
 
 outputs:
   container_repository:
@@ -42,7 +44,7 @@ runs:
       with:
         registry: ghcr.io
         username: hip-ci
-        password: ${{ secrets.GITHUB_TOKEN }}
+        password: ${{ inputs.github-token }}
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1

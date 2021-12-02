@@ -65,6 +65,8 @@ runs:
         ls 
         echo "listing coverage: "
         ls coverage
+        pwd
+        ls -l /home/runner/work/marketplace/marketplace/coverage/lcov.info
         echo "::set-output name=coverageReportPaths::$( echo $coverageReportPaths |&  grep "\S" |& tr " " "," |& tr -d " ")"
         echo "::set-output name=testExecutionReportPaths::$( echo $testExecutionReportPaths |&  grep "\S" |& tr " " "," |& tr -d " ")"
       shell: bash

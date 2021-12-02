@@ -8,7 +8,8 @@ inputs:
   coverage_files:
     required: true
   test_execution_report_files:
-    required: true
+    required: false
+    default: ""
   sonar_server:
     required: true
   sonar_token:
@@ -52,8 +53,18 @@ runs:
         ${{ inputs.test_execution_report_files }}
         EOF
         )
-        echo "::set-output name=coverageReportPaths::$( echo $coverageReportPaths |& grep "\S" |& tr " " "," |& tr -d " ")"
-        echo "::set-output name=testExecutionReportPaths::$( echo $testExecutionReportPaths |& grep "\S" |& tr " " "," |& tr -d " ")"
+        echo "First echo:"
+        echo $coverageReportPaths
+        echo "Second echo:"
+        echo $coverageReportPaths |& xargs -n1 basename
+        echo "Third echo:"
+        echo $coverageReportPaths |& xargs -n1 basename |& grep "\S"
+        echo "fourth echo"
+        echo $coverageReportPaths |& xargs -n1 basename |& grep "\S" |& tr "\n" ","
+        echo "last echo: "
+        echo $coverageReportPaths |& xargs -n1 basename |& grep "\S" |& tr "\n" "," |& tr -d " "
+        echo "::set-output name=coverageReportPaths::$( echo $coverageReportPaths |& xargs -n1 basename |& grep "\S" |& tr "\n" "," |& tr -d " ")"
+        echo "::set-output name=testExecutionReportPaths::$( echo $testExecutionReportPaths |& xargs -n1 basename |& grep "\S" |& tr "\n" "," |& tr -d " ")"
       shell: bash
 
     - name: Run sonarqube

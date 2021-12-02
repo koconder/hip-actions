@@ -25,8 +25,8 @@ runs:
       with:
         name: coverage
         path: |
-          ${{ inputs.coverage_files }}
           ${{ inputs.test_execution_report_files }}
+          ${{ inputs.coverage_files }}
 
     - uses: FranzDiebold/github-env-vars-action@v2
 

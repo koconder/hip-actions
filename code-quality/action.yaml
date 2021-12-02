@@ -24,7 +24,6 @@ runs:
       uses: actions/download-artifact@v2
       with:
         name: coverage
-        path: coverage
 
 
     - uses: FranzDiebold/github-env-vars-action@v2

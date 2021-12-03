@@ -52,8 +52,8 @@ runs:
         EOF
         )
         for file in $(echo $coverageReportPaths); do
-          tmp=$file
-          output=${{ inputs.root }}/$tmp,${{ inputs.root }}/$file
+          tmp=${{ inputs.root }}/$file
+          output=$tmp,$file
         done
         echo "Output is: $output"
         # testExecutionReportPaths=$(cat << EOF

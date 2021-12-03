@@ -46,15 +46,16 @@ runs:
     - name: Parse test files
       id: parse-report-files
       run: |
-        for file in $(echo ${{ inputs.files }}); do
+        
+        coverageReportPaths=$(cat << EOF
+        ${{ inputs.files }}
+        EOF
+        )
+        for file in $(echo $coverageReportPaths); do
           tmp=$i
           output=${{ inputs.root }}/$tmp,${{ inputs.root }}/$i
         done
         echo "Output is: $output"
-        # coverageReportPaths=$(cat << EOF
-        # ${{ inputs.coverage_files }}
-        # EOF
-        # )
         # testExecutionReportPaths=$(cat << EOF
         # ${{ inputs.test_execution_report_files }}
         # EOF

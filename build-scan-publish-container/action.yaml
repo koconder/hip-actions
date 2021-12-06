@@ -75,9 +75,9 @@ runs:
         cache-to: type=inline
         tags: ${{ inputs.registry_url }}/${{ github.repository }}:latest,${{ inputs.registry_url }}/${{ github.repository }}:${{ github.sha }}
     
-    - name: Container scan
-      uses: Azure/container-scan@v0
-      with:
-        image-name: ${{ inputs.registry_url }}/${{ github.repository }}:${{ github.sha }}
+    # - name: Container scan
+    #   uses: Azure/container-scan@v0
+    #   with:
+    #     image-name: ${{ inputs.registry_url }}/${{ github.repository }}:${{ github.sha }}
 
 

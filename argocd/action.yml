@@ -7,9 +7,6 @@ inputs:
   server:
     description: "ArgoCD server domain."
     required: true
-  deploy_file:
-    description: "ArgoCD deploy file name."
-    required: true
   opts:
     description: "Additional options for the ArgoCD server."
     required: true
@@ -17,8 +14,8 @@ inputs:
   authToken:
     description: "Authentication token"
     required: true
-  manifests:
-    description: "The manifests to be processed (glob)."
+  manifest_file:
+    description: "The manifests to be processed."
     required: true
     default: ".argocd*.yml"
 outputs:

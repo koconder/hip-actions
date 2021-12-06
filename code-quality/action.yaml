@@ -5,7 +5,7 @@ inputs:
   wait:
     required: false
     default: true
-  files:
+  coverage_file:
     required: true
   sonar_server:
     required: true
@@ -13,21 +13,17 @@ inputs:
     required: true
   github_token:
     required: true
-  root:
+  coverage_dir:
     required: true
 
 runs:
   using: "composite"
   steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-
     - name: Download test coverage data
       uses: actions/download-artifact@v2
       with:
         name: coverage
-        path: ${{ inputs.root }}
-
+        path: ${{ inputs.coverage_dir }}
 
     - uses: FranzDiebold/github-env-vars-action@v2
 
@@ -43,43 +39,43 @@ runs:
     - name: Setup sonarqube
       uses: warchant/setup-sonar-scanner@v3
 
-    - name: Parse test files
-      id: parse-report-files
-      run: |
+    # - name: Parse test files
+    #   id: parse-report-files
+    #   run: |
         
-        coverageReportPaths=$(cat << EOF
-        ${{ inputs.files }}
-        EOF
-        )
-        for file in $(echo $coverageReportPaths); do
-          tmp=${{ inputs.root }}/$file
-          output=$tmp,$file
-        done
-        echo "Output is: $output"
-        # testExecutionReportPaths=$(cat << EOF
-        # ${{ inputs.test_execution_report_files }}
-        # EOF
-        # )
-        # echo "First echo:"
-        # echo $coverageReportPaths
-        # echo "Second echo:"
-        # echo $coverageReportPaths |& grep "\S"
-        # echo "fourth echo"
-        # echo $coverageReportPaths |&  grep "\S" |& tr " " ","
-        # echo "last echo: "
-        # echo $coverageReportPaths |& grep "\S" |& tr " " "," |& tr -d " "
-        echo "Listing directories: "
-        ls 
-        echo "listing coverage: "
-        ls -l coverage/*
-        echo "Listing parent"
-        ls ../
-        echo "Current root"
-        pwd
-        ls -l /home/runner/work/marketplace/marketplace/coverage/lcov.info
-        #echo "::set-output name=coverageReportPaths::$( echo $coverageReportPaths |&  grep "\S" |& tr " " "," |& sed -e s/^/${{inputs.path }}\// |& tr -d " ")"
-        echo "::set-output name=coverageReportPaths::$output"
-      shell: bash
+    #     coverageReportPaths=$(cat << EOF
+    #     ${{ inputs.files }}
+    #     EOF
+    #     )
+    #     for file in $(echo $coverageReportPaths); do
+    #       tmp=${{ inputs.root }}/$file
+    #       output=$tmp,$file
+    #     done
+    #     echo "Output is: $output"
+    #     # testExecutionReportPaths=$(cat << EOF
+    #     # ${{ inputs.test_execution_report_files }}
+    #     # EOF
+    #     # )
+    #     # echo "First echo:"
+    #     # echo $coverageReportPaths
+    #     # echo "Second echo:"
+    #     # echo $coverageReportPaths |& grep "\S"
+    #     # echo "fourth echo"
+    #     # echo $coverageReportPaths |&  grep "\S" |& tr " " ","
+    #     # echo "last echo: "
+    #     # echo $coverageReportPaths |& grep "\S" |& tr " " "," |& tr -d " "
+    #     echo "Listing directories: "
+    #     ls 
+    #     echo "listing coverage: "
+    #     ls -l coverage/*
+    #     echo "Listing parent"
+    #     ls ../
+    #     echo "Current root"
+    #     pwd
+    #     ls -l /home/runner/work/marketplace/marketplace/coverage/lcov.info
+    #     #echo "::set-output name=coverageReportPaths::$( echo $coverageReportPaths |&  grep "\S" |& tr " " "," |& sed -e s/^/${{inputs.path }}\// |& tr -d " ")"
+    #     echo "::set-output name=coverageReportPaths::$output"
+    #   shell: bash
 
     - name: Run sonarqube
       env:
@@ -92,7 +88,7 @@ runs:
             -Dsonar.login="${{ inputs.sonar_token }}" \
             -Dsonar.projectVersion="${GITHUB_SHA}" \
             -Dsonar.links.scm="https://github.com/${GITHUB_REPOSITORY}" \
-            -Dsonar.coverageReportPaths="${{ steps.parse-report-files.outputs.coverageReportPaths}}" \
+            -Dsonar.coverageReportPaths="${{ inputs.coverage_file }}" \
             -Dsonar.sources=.
       shell: bash
 

@@ -1,98 +1,83 @@
 name: Build Scan and Publish
-description: Build Scan and Publish a container to ECR
+description: Build Scan and Publish a container to Container registry
 
 inputs:
-  aws-access-key-id:
-    description: AWS Acces key id
+  registry:
+    # ghcr or ecr
     required: true
-  aws-secret-access-key:
-    description: AWS Secret key id
-    required: true
-  aws-region:
-    description: AWS Region
-    required: true
-  github-token:
+  registry_url:
     required: true
 
-outputs:
-  container_repository:
-    description: Respository of the newly built image
-    #value: ${{ steps.login-ecr.outputs.registry }}/${{ github.repository }}
-    value: "test"
-  container_tag:
-    description: Tag of the newly built image
-    #value: ${{ github.sha }}
-    value: "test"
+  # ECR settings  
+  aws-access-key-id:
+    description: AWS Acces key id
+    required: false
+  aws-secret-access-key:
+    description: AWS Secret key id
+    required: false
+  aws-region:
+    description: AWS Region
+    required: false
+
+  # GHCR token
+  github-token:
+    required: false
 
 runs:
   using: "composite"
   steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-    
-    # - name: Configure AWS credentials
-    #   uses: aws-actions/configure-aws-credentials@v1
-    #   with:
-    #     aws-access-key-id: ${{ inputs.aws-access-key-id }}
-    #     aws-secret-access-key: ${{ inputs.aws-secret-access-key }}
-    #     aws-region: ${{ inputs.aws-region }}
-
-    # - name: Login to Amazon ECR
-    #   id: login-ecr
-    #   uses: aws-actions/amazon-ecr-login@v1
 
     - name: Log in to Github Container registry
       uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+      if: ${{ inputs.registry == 'ghcr' }}
       with:
-        registry: ghcr.io
+        registry: ${{ inputs.registry_url }}
         username: hip-ci
         password: ${{ inputs.github-token }}
+      
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      if: ${{ inputs.registry == 'ecr' }}
+      with:
+        aws-access-key-id: ${{ inputs.aws-access-key-id }}
+        aws-secret-access-key: ${{ inputs.aws-secret-access-key }}
+        aws-region: ${{ inputs.aws-region }}
+    
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+      if: ${{ inputs.registry == 'ecr' }}
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
-    
-    # - name: Cache Docker layers
-    #   uses: actions/cache@v2
-    #   with:
-    #     path: /tmp/.buildx-cache
-    #     key: ${{ runner.os }}-buildx-${{ github.sha }}
-    #     restore-keys: |
-    #       ${{ runner.os }}-buildx-
-
-    # - name: Build, tag, and push image ECR
-    #   uses: docker/build-push-action@v2
-    #   with:
-    #     context: .
-    #     file: ./Dockerfile
-    #     pull: false
-    #     push: true
-    #     cache-from: type=gha
-    #     cache-to: type=gha,mode=max
-    #     tags: ${{ steps.login-ecr.outputs.registry }}/${{ github.repository }}:latest,${{ steps.login-ecr.outputs.registry }}/${{ github.repository }}:${{ github.sha }}
 
     - name: Build, tag, and push image GHCR
       uses: docker/build-push-action@v2
+      if: ${{ inputs.registry == 'ghcr' }}
       with:
         context: .
         file: ./Dockerfile
         pull: false
         push: true
-        cache-from: type=registry,ref=ghcr.io/${{ github.repository }}:latest
-        cache-to: type=registry,ref=ghcr.io/${{ github.repository }}:latest,mode=max
-        tags: ghcr.io/${{ github.repository }}:${{ github.sha }}
+        cache-from: type=registry,ref=${{ inputs.registry_url }}/${{ github.repository }}:latest
+        cache-to: type=registry,ref=${{ inputs.registry_url }}/${{ github.repository }}:latest,mode=max
+        tags: ${{ inputs.registry_url }}/${{ github.repository }}:${{ github.sha }}
 
-    # Temp fix
-    # https://github.com/docker/build-push-action/issues/252
-    # https://github.com/moby/buildkit/issues/1896
-    # - name: Move cache
-    #   run: |
-    #     rm -rf /tmp/.buildx-cache
-    #     mv /tmp/.buildx-cache-new /tmp/.buildx-cache
-    #   shell: bash
+    - name: Build, tag, and push image ECR
+      uses: docker/build-push-action@v2
+      if: ${{ inputs.registry == 'ecr' }}
+      with:
+        context: .
+        file: ./Dockerfile
+        pull: true
+        push: true
+        cache-from: type=registry,ref=${{ inputs.registry_url }}/${{ github.repository }}:latest
+        cache-to: type=inline
+        tags: ${{ inputs.registry_url }}/${{ github.repository }}:latest,${{ inputs.registry_url }}/${{ github.repository }}:${{ github.sha }}
     
-    # - name: Container scan
-    #   uses: Azure/container-scan@v0
-    #   with:
-    #     image-name: ${{ steps.login-ecr.outputs.registry }}/${{ github.repository }}:${{ github.sha }}
+    - name: Container scan
+      uses: Azure/container-scan@v0
+      with:
+        image-name: ${{ inputs.registry_url }}/${{ github.repository }}:${{ github.sha }}
 
 

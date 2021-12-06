@@ -4,8 +4,10 @@ description: Build Scan and Publish a container to Container registry
 inputs:
   registry:
     # ghcr or ecr
+    description: Container registry type ( ecr or ghcr )
     required: true
   registry_url:
+    description: Container registry url( eg. ghcr.io)
     required: true
 
   # ECR settings  
@@ -21,11 +23,15 @@ inputs:
 
   # GHCR token
   github-token:
+    description: GITHUB_TOKEN
     required: false
 
 runs:
   using: "composite"
   steps:
+
+    - run: grep -q @hipagesgroup yarn.lock && echo //npm.pkg.github.com/:_authToken=$GITHUB_TOKEN >> .npmrc || true
+      shell: bash
 
     - name: Log in to Github Container registry
       uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9

@@ -6,10 +6,13 @@ inputs:
     description: PHP / Nodejs / Python
     required: true
   version:
+    description: Version of the language
     required: true
   cache:
+    description: what cache to use (node / yarn / composer / pip)
     required: true
   install:
+    description: Application install command ( eg. yarn install / composer install / pip install )
     required: true
 
 runs:

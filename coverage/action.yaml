@@ -2,7 +2,7 @@ name: coverage
 description: Merge and upload code coverage
 
 inputs:
-  files:
+  coverage_dir:
     required: true
 
 runs:
@@ -16,4 +16,4 @@ runs:
       with:
         name: coverage
         path: |
-          ${{ inputs.files }}
+          ${{ inputs.coverage_dir }}

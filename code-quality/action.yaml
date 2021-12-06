@@ -4,7 +4,7 @@ description: Runs Code quality checks
 inputs:
   wait:
     required: false
-    default: true
+    default: false
   coverage_file:
     required: true
   sonar_server:
@@ -88,7 +88,7 @@ runs:
             -Dsonar.login="${{ inputs.sonar_token }}" \
             -Dsonar.projectVersion="${GITHUB_SHA}" \
             -Dsonar.links.scm="https://github.com/${GITHUB_REPOSITORY}" \
-            -Dsonar.coverageReportPaths="${{ inputs.coverage_dir }}/${{ inputs.coverage_file }}" \
+            -Dsonar.javascript.lcov.reportPaths="${{ inputs.coverage_dir }}/${{ inputs.coverage_file }}" \
             -Dsonar.sources=.
       shell: bash
 
@@ -96,4 +96,4 @@ runs:
       uses: sonarsource/sonarqube-quality-gate-action@master
       env:
        SONAR_TOKEN: ${{ inputs.sonar_token }}
-      if: ${{ inputs.wait }}
+      if: ${{ inputs.wait == 'true' }}

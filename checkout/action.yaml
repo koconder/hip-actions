@@ -89,3 +89,5 @@ runs:
         fetch-depth: ${{ inputs.fetch-depth }}
         lfs: ${{ inputs.lfs }}
         submodules: ${{ inputs.submodules }}
+
+    - uses: hipagesgroup/actions/github-env-vars-action@js

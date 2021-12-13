@@ -33,7 +33,7 @@ runs:
         args: >
           -Dsonar.organization="${CI_REPOSITORY_OWNER_SLUG}"
           -Dsonar.projectKey="${CI_REPOSITORY_NAME_SLUG}"
-          -Dsonar.projectVersion="${GITHUB_SHA}"
+          -Dsonar.projectVersion="${CI_SHA_SHORT}"
           -Dsonar.links.scm="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}"
           -Dsonar.links.ci="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
           -Dsonar.javascript.lcov.reportPaths="${{ inputs.coverage_dir }}/${{ inputs.coverage_file }}"

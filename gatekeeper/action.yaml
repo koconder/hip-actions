@@ -1,0 +1,9 @@
+name: 'Gatekeeper'
+description: 'hipages CI gatekeeper'
+author: ''
+runs:
+  using: 'node12'
+  main: 'dist/index.js'
+branding:
+  icon: 'plus-circle'
+  color: 'green'

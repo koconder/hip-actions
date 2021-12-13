@@ -1,23 +1,75 @@
-name: "ArgoCD"
-description: "GitHub Action for ArgoCD"
-runs:
-  using: "docker"
-  image: "Dockerfile"
+name: argocd
+description: Replace dynamic values and Deploy to argoCD
+
 inputs:
+  authToken:
+    description: ArgoCD auth token
+    required: true
   server:
     description: "ArgoCD server domain."
     required: true
-  opts:
-    description: "Additional options for the ArgoCD server."
-    required: true
-    default: "--grpc-web"
-  authToken:
-    description: "Authentication token"
-    required: true
-  manifests:
-    description: "The manifests to be processed (glob)."
+  manifest_file:
+    description: "The manifests to be processed."
     required: true
     default: ".argocd*.yml"
-outputs:
-  externalURL:
-    description: "Contains the ingress URL (if available)"
+  dynamic_file:
+    description: "Dynamic file to replace environment variables"
+    required: false
+
+runs:
+  using: "composite"
+  steps:
+    - name: Replace vars
+      run: |
+        echo "Current ArgoCD file is:"
+        cat ${{ inputs.manifest_file }}
+
+        echo "Replacing manifest file with variables"
+        tmp=$(mktemp)
+        envsubst < ${{ inputs.manifest_file }} > $tmp
+        cat $tmp > ${{ inputs.manifest_file }}
+        echo "Argo file after replacement: "
+        cat ${{ inputs.manifest_file }}
+        echo "Replacing dynamic files:"
+        tmp=$(mktemp)
+        envsubst < ${{ inputs.dynamic_file }} > $tmp
+        cat $tmp > ${{ inputs.dynamic_file }}
+        cat ${{ inputs.dynamic_file }}
+
+      shell: bash
+
+    - name: Run ArgoCD action
+      uses: clowdhaus/argo-cd-action/@main
+      with:
+        version: 2.1.7
+        command: app create -f ${{ inputs.manifest_file }} --values-literal-file ${{ inputs.dynamic_file }} --upsert
+        options: --grpc-web --server ${{ inputs.server }} --auth-token ${{ inputs.authToken }} 
+  
+    - name: Cache oq
+      id: cache-oq
+      uses: actions/cache@v2
+      with:
+        path: /tmp/oq
+        key: ${{ runner.os }}-oq
+
+    - name: Download oq
+      id: download-oq
+      if: steps.cache-primes.outputs.cache-hit != 'true'
+      run: |
+        wget https://github.com/Blacksmoke16/oq/releases/download/v0.2.1/oq-0.2.1-linux-x86_64 -O /tmp/oq && chmod +x /tmp/oq
+      shell: bash
+
+    - name: Extract app name
+      id: app
+      run: |
+        app=$(/tmp/oq -r -i yaml .metadata.name ${{ inputs.manifest_file }})
+        echo "::set-output name=appName::$app"
+      shell: bash
+
+    - name: Run ArgoCD action
+      uses: clowdhaus/argo-cd-action/@main
+      with:
+        version: 2.1.7
+        command: app wait ${{ steps.app.outputs.appName }} --timeout 240
+        options: --grpc-web --server ${{ inputs.server }} --auth-token ${{ inputs.authToken }} 
+    

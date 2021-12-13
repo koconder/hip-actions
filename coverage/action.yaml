@@ -1,0 +1,16 @@
+name: coverage
+description: Merge and upload code coverage
+
+inputs:
+  coverage_dir:
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Upload test coverage files
+      uses: actions/upload-artifact@v2
+      with:
+        name: coverage
+        path: |
+          ${{ inputs.coverage_dir }}

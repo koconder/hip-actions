@@ -9,8 +9,6 @@ inputs:
     required: true
   sonar_server:
     required: false
-  sonar_org:
-    required: true
   sonar_token:
     required: true
   github_token:
@@ -21,6 +19,8 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - uses: hipagesgroup/actions/github-env-vars-action@master
+
     - name: Download test coverage data
       uses: actions/download-artifact@v2
       with:
@@ -31,7 +31,7 @@ runs:
       uses: sonarsource/sonarcloud-github-action@master
       with:
         args: >
-          -Dsonar.organization="${SONAR_ORG}"
+          -Dsonar.organization="${CI_REPOSITORY_OWNER_SLUG}"
           -Dsonar.projectKey="${CI_REPOSITORY_NAME_SLUG}"
           -Dsonar.projectVersion="${GITHUB_SHA}"
           -Dsonar.links.scm="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}"
@@ -41,7 +41,6 @@ runs:
       env:
         GITHUB_TOKEN: ${{ inputs.github_token }}
         SONAR_TOKEN: ${{ inputs.sonar_token }}
-        SONAR_ORG: ${{ inputs.sonar_org }}
 
     - name: Check quality gate
       uses: sonarsource/sonarqube-quality-gate-action@master

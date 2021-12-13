@@ -31,12 +31,12 @@ runs:
       uses: sonarsource/sonarcloud-github-action@master
       with:
         args: >
-          -Dsonar.organization="${{ env.CI_REPOSITORY_OWNER_SLUG }}"
-          -Dsonar.projectKey="${{ env.CI_REPOSITORY_OWNER_SLUG }}_${{ env.CI_REPOSITORY_NAME_SLUG }}"
-          -Dsonar.projectVersion="${{ env.CI_SHA_SHORT }}"
-          -Dsonar.links.scm="${{ env.GITHUB_SERVER_URL }}/${{ env.GITHUB_REPOSITORY }}"
-          -Dsonar.links.ci="${{ env.GITHUB_SERVER_URL }}/${{ env.GITHUB_REPOSITORY }}/actions/runs/${{ env.GITHUB_RUN_ID }}"
-          -Dsonar.javascript.lcov.reportPaths="${{ inputs.coverage_dir }}/${{ inputs.coverage_file }}"
+          -Dsonar.organization=${{ env.CI_REPOSITORY_OWNER_SLUG }}
+          -Dsonar.projectKey=${{ env.CI_REPOSITORY_OWNER_SLUG }}_${{ env.CI_REPOSITORY_NAME_SLUG }}
+          -Dsonar.projectVersion=${{ env.CI_SHA_SHORT }}
+          -Dsonar.links.scm=${{ env.GITHUB_SERVER_URL }}/${{ env.GITHUB_REPOSITORY }}
+          -Dsonar.links.ci=${{ env.GITHUB_SERVER_URL }}/${{ env.GITHUB_REPOSITORY }}/actions/runs/${{ env.GITHUB_RUN_ID }}
+          -Dsonar.javascript.lcov.reportPaths=${{ inputs.coverage_dir }}/${{ inputs.coverage_file }}
           -Dsonar.sources=.
       env:
         GITHUB_TOKEN: ${{ inputs.github_token }}

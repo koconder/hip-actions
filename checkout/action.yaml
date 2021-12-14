@@ -90,8 +90,8 @@ runs:
         lfs: ${{ inputs.lfs }}
         submodules: ${{ inputs.submodules }}
 
-    - uses: hipagesgroup/actions/github-env-vars-action@main
+    - uses: hipagesgroup/actions/github-env-vars-action@master
 
-    - uses: hipagesgroup/actions/gatekeeper@main
+    - uses: hipagesgroup/actions/gatekeeper@master
       with:
         token: ${{ inputs.token }}

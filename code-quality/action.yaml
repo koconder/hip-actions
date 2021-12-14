@@ -35,7 +35,7 @@ runs:
           -Dsonar.projectVersion="${GITHUB_SHA}"
           -Dsonar.links.scm="https://github.com/${GITHUB_REPOSITORY}"
           -Dsonar.javascript.lcov.reportPaths="${{ inputs.coverage_dir }}/${{ inputs.coverage_file }}"
-          -Dsonar.qualitygate.wait=${{ wait == true && true || false }}
+          -Dsonar.qualitygate.wait=${{ inputs.wait == true && true || false }}
           -Dsonar.sources=.
       env:
         GITHUB_TOKEN: ${{ inputs.github_token }}

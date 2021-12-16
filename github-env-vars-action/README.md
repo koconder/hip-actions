@@ -1,9 +1,6 @@
 # :octocat: :rocket: GitHub Environment Variables Action
 
-[![GitHub Action: View on Marketplace](https://img.shields.io/badge/GitHub%20Action-View_on_Marketplace-28a745?logo=github)](https://github.com/marketplace/actions/github-environment-variables-action)
-[![Demo: available](https://img.shields.io/badge/Demo-available-orange)](.github/workflows/demo.yml)
-[![Version: v2.3.0](https://img.shields.io/badge/Version-v2.3.0-brightgreen)](https://github.com/FranzDiebold/github-env-vars-action/releases/tag/v2.3.0)
-[![Lint and Test](https://github.com/FranzDiebold/github-env-vars-action/workflows/Lint%20and%20Test/badge.svg)](https://github.com/FranzDiebold/github-env-vars-action/actions?query=workflow%3A%22Lint+and+Test%22)
+
 [![license: MIT](https://img.shields.io/badge/license-MIT-brightgreen.svg)](./LICENSE)
 
 A [GitHub Action](https://github.com/features/actions) to expose useful environment variables.
@@ -38,6 +35,8 @@ A [GitHub Action](https://github.com/features/actions) to expose useful environm
 | `CI_RUN_NUMBER`            | A unique number for each run of a particular workflow in a repository. This number begins at 1 for the workflow's first run, and increments with each new run. This number does not change if you re-run the workflow run. Copy of `GITHUB_RUN_NUMBER` - for reasons of completeness. | `73` |
 | `CI_WORKFLOW`              | The name of the workflow. Copy of `GITHUB_WORKFLOW` - for reasons of completeness.                                                                             | `Demo`                                     |
 | `CI_ACTION`                | The unique identifier (`id`) of the action. Copy of `GITHUB_ACTION` - for reasons of completeness.                                                             | `run2`                                     |
+| `CI_HIPAGES_APP_NAME` | A custom hipages variable consisting of the value of `CI_REPOSITORY_NAME_SLUG` | `attchments-api`
+| `CI_HIPAGES_RELEASE_NAME` | A custom hipages variable that can be used when deploying apps to staging / non-prod environments. The value of this variable consists of `CI_REPOSITORY_NAME_SLUG`-`CI_REF_NAME_SLUG` | `attachments-api-staging`
 
 > The [slugified](https://en.wikipedia.org/wiki/Clean_URL#Slug) values are designed to be used in a URL.
 
@@ -59,39 +58,3 @@ For a full list of default environment variables exposed by GitHub see [https://
 | `GITHUB_WORKFLOW`         | The name of the workflow.                                                                                                                       | `Demo`                                     |
 | `GITHUB_ACTION`           | The unique identifier (`id`) of the action.                                                                                                     | `run2`                                     |
 
-## :rocket: Example usage
-
-```yaml
-steps:
-  - uses: FranzDiebold/github-env-vars-action@v2
-  - name: Print environment variables
-    run: |
-      echo "CI_REPOSITORY_SLUG=$CI_REPOSITORY_SLUG"
-      echo "CI_REPOSITORY_OWNER=$CI_REPOSITORY_OWNER"
-      echo "CI_REPOSITORY_OWNER_SLUG=$CI_REPOSITORY_OWNER_SLUG"
-      echo "CI_REPOSITORY_NAME=$CI_REPOSITORY_NAME"
-      echo "CI_REPOSITORY_NAME_SLUG=$CI_REPOSITORY_NAME_SLUG"
-      echo "CI_REPOSITORY=$CI_REPOSITORY"
-      echo "CI_REF_SLUG=$CI_REF_SLUG"
-      echo "CI_ACTION_REF_NAME=$CI_ACTION_REF_NAME"
-      echo "CI_ACTION_REF_NAME_SLUG=$CI_ACTION_REF_NAME_SLUG"
-      echo "CI_REF_NAME=$CI_REF_NAME"
-      echo "CI_REF_NAME_SLUG=$CI_REF_NAME_SLUG"
-      echo "CI_REF=$CI_REF"
-      echo "CI_HEAD_REF_SLUG=$CI_HEAD_REF_SLUG"
-      echo "CI_HEAD_REF=$CI_HEAD_REF"
-      echo "CI_BASE_REF_SLUG=$CI_BASE_REF_SLUG"
-      echo "CI_BASE_REF=$CI_BASE_REF"
-      echo "CI_SHA_SHORT=$CI_SHA_SHORT"
-      echo "CI_SHA=$CI_SHA"
-      echo "CI_ACTOR=$CI_ACTOR"
-      echo "CI_EVENT_NAME=$CI_EVENT_NAME"
-      echo "CI_RUN_ID=$CI_RUN_ID"
-      echo "CI_RUN_NUMBER=$CI_RUN_NUMBER"
-      echo "CI_WORKFLOW=$CI_WORKFLOW"
-      echo "CI_ACTION=$CI_ACTION"
-```
-
-### Demo
-
-A demo for all Operating systems (Linux, macOS and Windows) is also available in the [demo workflows file of this repository](.github/workflows/demo.yml)!

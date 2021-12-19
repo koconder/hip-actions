@@ -2,6 +2,10 @@ name: argocd
 description: Replace dynamic values and Deploy to argoCD
 
 inputs:
+  argocdTimeout:
+    description: ArgoCD app creation timeout
+    required: false
+    default: 300
   authToken:
     description: ArgoCD auth token
     required: true
@@ -70,6 +74,6 @@ runs:
       uses: clowdhaus/argo-cd-action/@main
       with:
         version: 2.1.7
-        command: app wait ${{ steps.app.outputs.appName }} --timeout 240
+        command: app wait ${{ steps.app.outputs.appName }} --timeout ${{ inputs.argocdTimeout }}
         options: --grpc-web --server ${{ inputs.server }} --auth-token ${{ inputs.authToken }} 
     

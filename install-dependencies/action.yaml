@@ -2,6 +2,9 @@ name: install-dependencies
 description: Install package dependencies and use cache
 
 inputs:
+  npm-token:
+    description: NPM PAT to use yarn hipagesgroup packages
+    required: false
   language:
     description: PHP / Nodejs / Python
     required: true
@@ -26,8 +29,9 @@ runs:
         node-version: ${{ inputs.version }}
         cache: ${{ inputs.cache }}
 
-    - run: grep -q @hipagesgroup yarn.lock && echo //npm.pkg.github.com/:_authToken=$GITHUB_TOKEN >> .npmrc || true
-      if: ${{ inputs.language == 'node' }}
+    - run: |
+          grep -q @hipagesgroup yarn.lock && echo //npm.pkg.github.com/:_authToken=${{ inputs.npm-token }} >> .npmrc || true
+      if: ${{ inputs.language == 'node' && inputs.npm-token }}
       shell: bash
 
     - run: ${{ inputs.install }}

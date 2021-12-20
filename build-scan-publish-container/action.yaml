@@ -25,12 +25,17 @@ inputs:
   github-token:
     description: GITHUB_TOKEN
     required: false
+  npm-token:
+    description: NPM PAT to use yarn hipagesgroup packages
+    required: false
 
 runs:
   using: "composite"
   steps:
 
-    - run: grep -q @hipagesgroup yarn.lock && echo //npm.pkg.github.com/:_authToken=$GITHUB_TOKEN >> .npmrc || true
+    - run: |
+          grep -q @hipagesgroup yarn.lock && echo //npm.pkg.github.com/:_authToken=${{ inputs.npm-token }} >> .npmrc || true
+      if: ${{ inputs.npm-token}}
       shell: bash
 
     - name: Log in to Github Container registry
@@ -80,10 +85,5 @@ runs:
         cache-from: type=registry,ref=${{ inputs.registry_url }}/${{ github.repository }}:latest
         cache-to: type=inline
         tags: ${{ inputs.registry_url }}/${{ github.repository }}:latest,${{ inputs.registry_url }}/${{ github.repository }}:${{ env.CI_SHA_SHORT }}
-    
-    # - name: Container scan
-    #   uses: Azure/container-scan@v0
-    #   with:
-    #     image-name: ${{ inputs.registry_url }}/${{ github.repository }}:${{ env.CI_SHA_SHORT }}
 
 

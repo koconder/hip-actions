@@ -176,19 +176,6 @@ try {
   core.exportVariable('CI_BASE_REF', baseRef);
   core.info(`Set CI_BASE_REF=${process.env.CI_BASE_REF}`);
 
-  // i.e. ffac537e6cbbf934b08745a378932722df287a53
-  const sha = process.env.GITHUB_SHA;
-  if (sha) {
-    core.exportVariable('CI_SHA_SHORT', getShaShort(sha));
-    core.info(`Set CI_SHA_SHORT=${process.env.CI_SHA_SHORT}`);
-  } else {
-    core.info('Environment variable "GITHUB_SHA" not set. ' +
-      'Cannot set "CI_SHA_SHORT".');
-  }
-
-  core.exportVariable('CI_SHA', sha);
-  core.info(`Set CI_SHA=${process.env.CI_SHA}`);
-
   const pullRequest = github.context.payload &&
       github.context.payload.pull_request;
   if (pullRequest) {
@@ -231,15 +218,41 @@ try {
 
   // hipages custom variables
 
+  const repo_slug = process.env.CI_REPOSITORY_NAME_SLUG;
+
   const app_name = process.env.CI_REPOSITORY_NAME_SLUG;
   core.exportVariable('CI_HIPAGES_APP_NAME', app_name);
   core.info(`Set CI_HIPAGES_APP_NAME=${process.env.CI_HIPAGES_APP_NAME}`);
 
-  const repo_slug = process.env.CI_REPOSITORY_NAME_SLUG;
-  const branch_slug = process.env.CI_REF_NAME_SLUG
-  core.exportVariable('CI_HIPAGES_RELEASE_NAME', repo_slug + '-' + branch_slug);
-  core.info(`Set CI_HIPAGES_RELEASE_NAME=${process.env.CI_HIPAGES_RELEASE_NAME}`);
+  if (pullRequest) {
 
+    // Set SHA to the Head of the PR commit so that it can be used in the deploy step
+    // i.e. ffac537e6cbbf934b08745a378932722df287a53
+    const head_sha = github.context.payload.pull_request.head.sha
+    core.exportVariable('CI_SHA', head_sha);
+    core.info(`Set CI_SHA=${process.env.CI_SHA}`);
+
+    core.exportVariable('CI_SHA_SHORT', getShaShort(head_sha));
+    core.info(`Set CI_SHA_SHORT=${process.env.CI_SHA_SHORT}`);
+
+    // Set correct branch name for PRs
+    const branch_slug = process.env.CI_HEAD_REF_SLUG
+    core.exportVariable('CI_HIPAGES_RELEASE_NAME', repo_slug + '-' + branch_slug);
+    core.info(`Set CI_HIPAGES_RELEASE_NAME=${process.env.CI_HIPAGES_RELEASE_NAME}`);
+
+  } else {
+    const sha = process.env.GITHUB_SHA;
+
+    core.exportVariable('CI_SHA_SHORT', getShaShort(sha));
+    core.info(`Set CI_SHA_SHORT=${process.env.CI_SHA_SHORT}`);
+    
+    core.exportVariable('CI_SHA', sha);
+    core.info(`Set CI_SHA=${process.env.CI_SHA}`);
+    
+    const branch_slug = process.env.CI_REF_NAME_SLUG
+    core.exportVariable('CI_HIPAGES_RELEASE_NAME', repo_slug + '-' + branch_slug);
+    core.info(`Set CI_HIPAGES_RELEASE_NAME=${process.env.CI_HIPAGES_RELEASE_NAME}`);
+  }
 
 } catch (error) {
   core.setFailed(error.message);

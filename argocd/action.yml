@@ -60,7 +60,7 @@ runs:
       id: download-oq
       if: steps.cache-primes.outputs.cache-hit != 'true'
       run: |
-        wget https://github.com/Blacksmoke16/oq/releases/download/v0.2.1/oq-0.2.1-linux-x86_64 -O /tmp/oq && chmod +x /tmp/oq
+        wget https://github.com/Blacksmoke16/oq/releases/download/v0.2.1/oq-0.2.1-linux-x86_64 -O /tmp/oq &>> /dev/null && chmod +x /tmp/oq
       shell: bash
 
     - name: Extract app name

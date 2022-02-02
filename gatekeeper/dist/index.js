@@ -8721,7 +8721,7 @@ if (context.payload.pull_request != null) {
     })
 
     //Check if we should skip ArgoCD deploy
-    const re = (/* unused pure expression or super */ null && (new RegExp('skipdeploy')));
+    const regex = new RegExp('skipdeploy');
     const branch_slug = process.env.CI_HEAD_REF_SLUG
 
     core.info(`Checking if we should skip ArgoCD deploy...`);

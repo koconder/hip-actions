@@ -8719,9 +8719,20 @@ if (context.payload.pull_request != null) {
     }
 
     })
-}
 
-// If violate return github exit code
+    //Check if we should skip ArgoCD deploy
+    const re = (/* unused pure expression or super */ null && (new RegExp('skipdeploy')));
+    const branch_slug = process.env.CI_HEAD_REF_SLUG
+
+    core.info(`Checking if we should skip ArgoCD deploy...`);
+
+    if (branch_slug.match(regex)) {
+      core.exportVariable('CI_HIPAGES_SKIP_DEPLOY', true);
+      core.info(`Setting CI_HIPAGES_SKIP_DEPLOY to true`);
+    } else {
+      core.exportVariable('CI_HIPAGES_SKIP_DEPLOY', false);
+    }
+}
 })();
 
 module.exports = __webpack_exports__;

@@ -32,6 +32,12 @@ runs:
         tmp=$(mktemp)
         envsubst < ${{ inputs.manifest_file }} > $tmp
         cat $tmp > ${{ inputs.manifest_file }}
+        if [ "$CI_ACTION_REF_NAME_SLUG" == "master" ]; then
+          echo "Removing Janitor TTL for staging environment"
+          tmp_argo=$(mktemp)
+          grep -v janitor ${{ inputs.manifest_file }} > $tmp_argo
+          cat $tmp_argo > ${{ inputs.manifest_file }}
+        fi
         echo "Argo file after replacement: "
         cat ${{ inputs.manifest_file }}
         echo "Replacing dynamic files:"
@@ -39,6 +45,7 @@ runs:
         envsubst < ${{ inputs.dynamic_file }} > $tmp
         cat $tmp > ${{ inputs.dynamic_file }}
         cat ${{ inputs.dynamic_file }}
+        
 
       shell: bash
 

@@ -28,6 +28,11 @@ inputs:
   npm-token:
     description: NPM PAT to use yarn hipagesgroup packages
     required: false
+    
+  build-args:
+    description: Buildx build-args
+    required: false
+    default: ""
 
 runs:
   using: "composite"
@@ -73,6 +78,7 @@ runs:
         cache-from: type=registry,ref=${{ inputs.registry_url }}/${{ github.repository }}:latest
         cache-to: type=registry,ref=${{ inputs.registry_url }}/${{ github.repository }}:latest,mode=max
         tags: ${{ inputs.registry_url }}/${{ github.repository }}:${{ env.CI_SHA_SHORT }}
+        build-args: ${{.inputs.build-args }}
 
     - name: Build, tag, and push image ECR
       uses: docker/build-push-action@v2
@@ -85,5 +91,5 @@ runs:
         cache-from: type=registry,ref=${{ inputs.registry_url }}/${{ github.repository }}:latest
         cache-to: type=inline
         tags: ${{ inputs.registry_url }}/${{ github.repository }}:latest,${{ inputs.registry_url }}/${{ github.repository }}:${{ env.CI_SHA_SHORT }}
-
+        build-args: ${{.inputs.build-args }}
 

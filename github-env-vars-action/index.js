@@ -257,10 +257,10 @@ try {
   // Sets CI_HIPAGES_IS_MASTER when branch name is master
   if (process.env.CI_HIPAGES_BRANCH_SLUG.toLowerCase() === "master") {
     core.exportVariable('CI_HIPAGES_IS_MASTER', true);
-    core.info(`Set CI_HIPAGES_IS_MASTER=${branch_slug}`);
+    core.info(`Set CI_HIPAGES_IS_MASTER=true`);
   } else {
     core.exportVariable('CI_HIPAGES_IS_MASTER', false);
-    core.info(`Set CI_HIPAGES_IS_MASTER=${branch_slug}`);
+    core.info(`Set CI_HIPAGES_IS_MASTER=false`);
   }
 
 } catch (error) {

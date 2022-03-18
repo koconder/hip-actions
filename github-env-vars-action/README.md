@@ -37,6 +37,7 @@ A [GitHub Action](https://github.com/features/actions) to expose useful environm
 | `CI_ACTION`                | The unique identifier (`id`) of the action. Copy of `GITHUB_ACTION` - for reasons of completeness.                                                             | `run2`                                     |
 | `CI_HIPAGES_APP_NAME` | A custom hipages variable consisting of the value of `CI_REPOSITORY_NAME_SLUG` | `attchments-api`
 | `CI_HIPAGES_RELEASE_NAME` | A custom hipages variable that can be used when deploying apps to staging / non-prod environments. The value of this variable consists of `CI_REPOSITORY_NAME_SLUG`-`CI_REF_NAME_SLUG` | `attachments-api-staging`
+| `CI_HIPAGES_IS_MASTER` | A custom hipages variable that is set to true in case the running branch is master. False otherwise | `true`
 
 > The [slugified](https://en.wikipedia.org/wiki/Clean_URL#Slug) values are designed to be used in a URL.
 

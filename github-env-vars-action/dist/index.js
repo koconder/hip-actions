@@ -254,6 +254,15 @@ try {
     core.info(`Set CI_HIPAGES_RELEASE_NAME=${process.env.CI_HIPAGES_RELEASE_NAME}`);
   }
 
+  // Sets CI_HIPAGES_IS_MASTER when branch name is master
+  if (branch_slug.toLowerCase() === "master") {
+    core.exportVariable('CI_HIPAGES_IS_MASTER', true);
+    core.info(`Set CI_HIPAGES_IS_MASTER=${branch_slug}`);
+  } else {
+    core.exportVariable('CI_HIPAGES_IS_MASTER', false);
+    core.info(`Set CI_HIPAGES_IS_MASTER=${branch_slug}`);
+  }
+
 } catch (error) {
   core.setFailed(error.message);
 }

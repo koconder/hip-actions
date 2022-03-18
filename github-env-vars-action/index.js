@@ -234,6 +234,9 @@ try {
     core.exportVariable('CI_HIPAGES_RELEASE_NAME', repo_slug + '-' + branch_slug);
     core.info(`Set CI_HIPAGES_RELEASE_NAME=${process.env.CI_HIPAGES_RELEASE_NAME}`);
 
+    core.exportVariable('CI_HIPAGES_BRANCH_SLUG', branch_slug);
+    core.info(`Set CI_HIPAGES_BRANCH_SLUG=${process.env.CI_HIPAGES_BRANCH_SLUG}`);
+
   } else {
     const sha = process.env.GITHUB_SHA;
 
@@ -246,10 +249,13 @@ try {
     const branch_slug = process.env.CI_REF_NAME_SLUG
     core.exportVariable('CI_HIPAGES_RELEASE_NAME', repo_slug + '-' + branch_slug);
     core.info(`Set CI_HIPAGES_RELEASE_NAME=${process.env.CI_HIPAGES_RELEASE_NAME}`);
+
+    core.exportVariable('CI_HIPAGES_BRANCH_SLUG', branch_slug);
+    core.info(`Set CI_HIPAGES_BRANCH_SLUG=${process.env.CI_HIPAGES_BRANCH_SLUG}`);
   }
 
   // Sets CI_HIPAGES_IS_MASTER when branch name is master
-  if (branch_slug.toLowerCase() === "master") {
+  if (process.env.CI_HIPAGES_BRANCH_SLUG.toLowerCase() === "master") {
     core.exportVariable('CI_HIPAGES_IS_MASTER', true);
     core.info(`Set CI_HIPAGES_IS_MASTER=${branch_slug}`);
   } else {

@@ -9,7 +9,7 @@ inputs:
   manifestFile:
     description: "The manifests to be processed."
     required: true
-    default: ".argocd.yml"
+    default: ".argocd.yaml"
   dynamicFile:
     description: "Dynamic file to replace environment variables"
     required: false
@@ -36,8 +36,8 @@ runs:
   steps:
     - shell: bash
       run: |
-        echo "manifestFile=${{ inputs.manifestFile || inputs.manifest_file }}" >> $GITHUB_ENV
-        echo "dynamicFile=${{ inputs.dynamicFile || inputs.dynamic_file }}" >> $GITHUB_ENV
+        echo "manifestFile=${{ inputs.manifest_file || inputs.manifestFile }}" >> $GITHUB_ENV
+        echo "dynamicFile=${{ inputs.dynamic_file || inputs.dynamicFile }}" >> $GITHUB_ENV
 
     - name: Replace vars
       run: |

@@ -10,11 +10,11 @@ const github = require('@actions/github');
  */
 function slugify(inputString) {
   return inputString
-      .toLowerCase()
-      .replace(/[^a-z0-9 -]/g, ' ') // remove invalid chars
-      .replace(/^\s+|\s+$/g, '') // trim
-      .replace(/\s+/g, '-') // collapse whitespace and replace by -
-      .replace(/-+/g, '-'); // collapse dashes
+    .toLowerCase()
+    .replace(/[^a-z0-9 -]/g, ' ') // remove invalid chars
+    .replace(/^\s+|\s+$/g, '') // trim
+    .replace(/\s+/g, '-') // collapse whitespace and replace by -
+    .replace(/-+/g, '-'); // collapse dashes
 }
 
 /**
@@ -53,6 +53,19 @@ function getShaShort(fullSha) {
   return fullSha ? fullSha.substring(0, 8) : null;
 }
 
+/**
+ * Should we skip the deployment step?
+ *
+ * @param {string} branch
+ * @param {string} prTitle
+ */
+function shouldSkipDeploy(branch, prTitle) {
+  if ((prTitle || '').toLowerCase().includes('[skip deploy]')) {
+    return true;
+  }
+  return branch.toLowerCase().includes('skipdeploy');
+}
+
 // https://docs.github.com/en/free-pro-team@latest/actions/reference/environment-variables#default-environment-variables
 
 try {
@@ -61,43 +74,49 @@ try {
 
   if (repository) {
     core.exportVariable('CI_REPOSITORY_SLUG', slugify(repository));
-    core.info(`Set CI_REPOSITORY_SLUG=` +
-      `${process.env.CI_REPOSITORY_SLUG}`);
+    core.info(`Set CI_REPOSITORY_SLUG=` + `${process.env.CI_REPOSITORY_SLUG}`);
   } else {
-    core.info('Environment variable "GITHUB_REPOSITORY" not set. ' +
-      'Cannot set "CI_REPOSITORY_SLUG".');
+    core.info(
+      'Environment variable "GITHUB_REPOSITORY" not set. ' +
+        'Cannot set "CI_REPOSITORY_SLUG".'
+    );
   }
 
   const repositoryOwner = getRepositoryOwner(repository);
   if (repositoryOwner) {
     core.exportVariable('CI_REPOSITORY_OWNER', repositoryOwner);
-    core.info(`Set CI_REPOSITORY_OWNER=` +
-      `${process.env.CI_REPOSITORY_OWNER}`);
+    core.info(
+      `Set CI_REPOSITORY_OWNER=` + `${process.env.CI_REPOSITORY_OWNER}`
+    );
 
-    core.exportVariable('CI_REPOSITORY_OWNER_SLUG',
-        slugify(repositoryOwner));
-    core.info(`Set CI_REPOSITORY_OWNER_SLUG=` +
-      `${process.env.CI_REPOSITORY_OWNER_SLUG}`);
+    core.exportVariable('CI_REPOSITORY_OWNER_SLUG', slugify(repositoryOwner));
+    core.info(
+      `Set CI_REPOSITORY_OWNER_SLUG=` +
+        `${process.env.CI_REPOSITORY_OWNER_SLUG}`
+    );
   } else {
-    core.info('Environment variable "GITHUB_REPOSITORY" not set. ' +
-      'Cannot set "CI_REPOSITORY_OWNER" and ' +
-      '"CI_REPOSITORY_OWNER_SLUG".');
+    core.info(
+      'Environment variable "GITHUB_REPOSITORY" not set. ' +
+        'Cannot set "CI_REPOSITORY_OWNER" and ' +
+        '"CI_REPOSITORY_OWNER_SLUG".'
+    );
   }
 
   const repositoryName = getRepositoryName(repository);
   if (repositoryName) {
     core.exportVariable('CI_REPOSITORY_NAME', repositoryName);
-    core.info(`Set CI_REPOSITORY_NAME=` +
-      `${process.env.CI_REPOSITORY_NAME}`);
+    core.info(`Set CI_REPOSITORY_NAME=` + `${process.env.CI_REPOSITORY_NAME}`);
 
-    core.exportVariable('CI_REPOSITORY_NAME_SLUG',
-        slugify(repositoryName));
-    core.info(`Set CI_REPOSITORY_NAME_SLUG=` +
-      `${process.env.CI_REPOSITORY_NAME_SLUG}`);
+    core.exportVariable('CI_REPOSITORY_NAME_SLUG', slugify(repositoryName));
+    core.info(
+      `Set CI_REPOSITORY_NAME_SLUG=` + `${process.env.CI_REPOSITORY_NAME_SLUG}`
+    );
   } else {
-    core.info('Environment variable "GITHUB_REPOSITORY" not set. ' +
-      'Cannot set "CI_REPOSITORY_NAME" and ' +
-      '"CI_REPOSITORY_NAME_SLUG".');
+    core.info(
+      'Environment variable "GITHUB_REPOSITORY" not set. ' +
+        'Cannot set "CI_REPOSITORY_NAME" and ' +
+        '"CI_REPOSITORY_NAME_SLUG".'
+    );
   }
 
   core.exportVariable('CI_REPOSITORY', repository);
@@ -110,8 +129,10 @@ try {
     core.exportVariable('CI_REF_SLUG', slugify(ref));
     core.info(`Set CI_REF_SLUG=${process.env.CI_REF_SLUG}`);
   } else {
-    core.info('Environment variable "GITHUB_REF" not set. ' +
-      'Cannot set "CI_REF_SLUG".');
+    core.info(
+      'Environment variable "GITHUB_REF" not set. ' +
+        'Cannot set "CI_REF_SLUG".'
+    );
   }
 
   const refName = getRefName(ref);
@@ -122,9 +143,11 @@ try {
     core.exportVariable('CI_REF_NAME_SLUG', slugify(refName));
     core.info(`Set CI_REF_NAME_SLUG=${process.env.CI_REF_NAME_SLUG}`);
   } else {
-    core.info('Environment variable "GITHUB_REF" not set. ' +
-      'Cannot set "CI_REF_NAME" and ' +
-      '"CI_REF_NAME_SLUG".');
+    core.info(
+      'Environment variable "GITHUB_REF" not set. ' +
+        'Cannot set "CI_REF_NAME" and ' +
+        '"CI_REF_NAME_SLUG".'
+    );
   }
 
   core.exportVariable('CI_REF', ref);
@@ -133,45 +156,55 @@ try {
   const headRef = process.env.GITHUB_HEAD_REF;
 
   const branchName = headRef || refName;
+
   if (branchName) {
     core.exportVariable('CI_ACTION_REF_NAME', branchName);
     core.info(`Set CI_ACTION_REF_NAME=${process.env.CI_ACTION_REF_NAME}`);
 
     core.exportVariable('CI_ACTION_REF_NAME_SLUG', slugify(branchName));
-    core.info('Set CI_ACTION_REF_NAME_SLUG=' +
-      `${process.env.CI_ACTION_REF_NAME_SLUG}`);
+    core.info(
+      'Set CI_ACTION_REF_NAME_SLUG=' + `${process.env.CI_ACTION_REF_NAME_SLUG}`
+    );
   } else {
-    core.info('Environment variables "GITHUB_REF" and ' +
-      '"GITHUB_HEAD_REF" not set. ' +
-      'Cannot set "CI_ACTION_REF_NAME" and ' +
-      '"CI_ACTION_REF_NAME_SLUG".');
+    core.info(
+      'Environment variables "GITHUB_REF" and ' +
+        '"GITHUB_HEAD_REF" not set. ' +
+        'Cannot set "CI_ACTION_REF_NAME" and ' +
+        '"CI_ACTION_REF_NAME_SLUG".'
+    );
   }
 
   if (headRef) {
     core.exportVariable('CI_HEAD_REF_SLUG', slugify(headRef));
     core.info(`Set CI_HEAD_REF_SLUG=${process.env.CI_HEAD_REF_SLUG}`);
   } else {
-    core.info('Environment variable "GITHUB_HEAD_REF" not set. ' +
-      'Cannot set "CI_HEAD_REF_SLUG".');
+    core.info(
+      'Environment variable "GITHUB_HEAD_REF" not set. ' +
+        'Cannot set "CI_HEAD_REF_SLUG".'
+    );
   }
 
   core.exportVariable('CI_HEAD_REF', headRef);
   core.info(`Set CI_HEAD_REF=${process.env.CI_HEAD_REF}`);
 
   const baseRef = process.env.GITHUB_BASE_REF;
+
   if (baseRef) {
     core.exportVariable('CI_BASE_REF_SLUG', slugify(baseRef));
     core.info(`Set CI_BASE_REF_SLUG=${process.env.CI_BASE_REF_SLUG}`);
   } else {
-    core.info('Environment variable "GITHUB_BASE_REF" not set. ' +
-      'Cannot set "CI_BASE_REF_SLUG".');
+    core.info(
+      'Environment variable "GITHUB_BASE_REF" not set. ' +
+        'Cannot set "CI_BASE_REF_SLUG".'
+    );
   }
 
   core.exportVariable('CI_BASE_REF', baseRef);
   core.info(`Set CI_BASE_REF=${process.env.CI_BASE_REF}`);
 
-  const pullRequest = github.context.payload &&
-      github.context.payload.pull_request;
+  const pullRequest =
+    github.context.payload && github.context.payload.pull_request;
+
   if (pullRequest) {
     const prTitle = pullRequest.title;
     core.exportVariable('CI_PR_TITLE', prTitle);
@@ -181,8 +214,9 @@ try {
     core.exportVariable('CI_PR_DESCRIPTION', prDescription);
     core.info(`Set CI_PR_DESCRIPTION=${process.env.CI_PR_DESCRIPTION}`);
   } else {
-    core.info('No pull request. ' +
-      'Cannot set "CI_PR_TITLE" and "CI_PR_DESCRIPTION".');
+    core.info(
+      'No pull request. ' + 'Cannot set "CI_PR_TITLE" and "CI_PR_DESCRIPTION".'
+    );
   }
 
   const actor = process.env.GITHUB_ACTOR;
@@ -209,7 +243,6 @@ try {
   core.exportVariable('CI_ACTION', action);
   core.info(`Set CI_ACTION=${process.env.CI_ACTION}`);
 
-
   // hipages custom variables
 
   const repo_slug = process.env.CI_REPOSITORY_NAME_SLUG;
@@ -219,10 +252,9 @@ try {
   core.info(`Set CI_HIPAGES_APP_NAME=${process.env.CI_HIPAGES_APP_NAME}`);
 
   if (pullRequest) {
-
     // Set SHA to the Head of the PR commit so that it can be used in the deploy step
     // i.e. ffac537e6cbbf934b08745a378932722df287a53
-    const head_sha = github.context.payload.pull_request.head.sha
+    const head_sha = github.context.payload.pull_request.head.sha;
     core.exportVariable('CI_SHA', head_sha);
     core.info(`Set CI_SHA=${process.env.CI_SHA}`);
 
@@ -230,32 +262,45 @@ try {
     core.info(`Set CI_SHA_SHORT=${process.env.CI_SHA_SHORT}`);
 
     // Set correct branch name for PRs
-    const branch_slug = process.env.CI_HEAD_REF_SLUG
-    core.exportVariable('CI_HIPAGES_RELEASE_NAME', repo_slug + '-' + branch_slug);
-    core.info(`Set CI_HIPAGES_RELEASE_NAME=${process.env.CI_HIPAGES_RELEASE_NAME}`);
+    const branch_slug = process.env.CI_HEAD_REF_SLUG;
+    core.exportVariable(
+      'CI_HIPAGES_RELEASE_NAME',
+      repo_slug + '-' + branch_slug
+    );
+    core.info(
+      `Set CI_HIPAGES_RELEASE_NAME=${process.env.CI_HIPAGES_RELEASE_NAME}`
+    );
 
     core.exportVariable('CI_HIPAGES_BRANCH_SLUG', branch_slug);
-    core.info(`Set CI_HIPAGES_BRANCH_SLUG=${process.env.CI_HIPAGES_BRANCH_SLUG}`);
-
+    core.info(
+      `Set CI_HIPAGES_BRANCH_SLUG=${process.env.CI_HIPAGES_BRANCH_SLUG}`
+    );
   } else {
     const sha = process.env.GITHUB_SHA;
 
     core.exportVariable('CI_SHA_SHORT', getShaShort(sha));
     core.info(`Set CI_SHA_SHORT=${process.env.CI_SHA_SHORT}`);
-    
+
     core.exportVariable('CI_SHA', sha);
     core.info(`Set CI_SHA=${process.env.CI_SHA}`);
-    
-    const branch_slug = process.env.CI_REF_NAME_SLUG
-    core.exportVariable('CI_HIPAGES_RELEASE_NAME', repo_slug + '-' + branch_slug);
-    core.info(`Set CI_HIPAGES_RELEASE_NAME=${process.env.CI_HIPAGES_RELEASE_NAME}`);
+
+    const branch_slug = process.env.CI_REF_NAME_SLUG;
+    core.exportVariable(
+      'CI_HIPAGES_RELEASE_NAME',
+      repo_slug + '-' + branch_slug
+    );
+    core.info(
+      `Set CI_HIPAGES_RELEASE_NAME=${process.env.CI_HIPAGES_RELEASE_NAME}`
+    );
 
     core.exportVariable('CI_HIPAGES_BRANCH_SLUG', branch_slug);
-    core.info(`Set CI_HIPAGES_BRANCH_SLUG=${process.env.CI_HIPAGES_BRANCH_SLUG}`);
+    core.info(
+      `Set CI_HIPAGES_BRANCH_SLUG=${process.env.CI_HIPAGES_BRANCH_SLUG}`
+    );
   }
 
   // Sets CI_HIPAGES_IS_MASTER when branch name is master
-  if (process.env.CI_HIPAGES_BRANCH_SLUG.toLowerCase() === "master") {
+  if (process.env.CI_HIPAGES_BRANCH_SLUG.toLowerCase() === 'master') {
     core.exportVariable('CI_HIPAGES_IS_MASTER', true);
     core.info(`Set CI_HIPAGES_IS_MASTER=true`);
   } else {
@@ -263,6 +308,13 @@ try {
     core.info(`Set CI_HIPAGES_IS_MASTER=false`);
   }
 
+  // Check if we should skip deployment
+  core.info(`Checking if we should skip deployment...`);
+
+  if (shouldSkipDeploy(branchName, process.env.CI_PR_TITLE)) {
+    core.exportVariable('CI_HIPAGES_SKIP_DEPLOY', true);
+    core.info(`Setting CI_HIPAGES_SKIP_DEPLOY to true`);
+  }
 } catch (error) {
   core.setFailed(error.message);
 }

@@ -30,7 +30,7 @@ runs:
       with:
         name: coverage
         path: ${{ inputs.coverage_dir }}
-    
+
     - name: Analyze with SonarCloud
       uses: sonarsource/sonarcloud-github-action@master
       with:

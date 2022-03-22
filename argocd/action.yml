@@ -5,50 +5,76 @@ inputs:
   argocdTimeout:
     description: ArgoCD app creation timeout
     required: false
-    default: 300
+    default: "300"
+  manifestFile:
+    description: "The manifests to be processed."
+    required: true
+    default: ".argocd.yml"
+  dynamicFile:
+    description: "Dynamic file to replace environment variables"
+    required: false
   authToken:
     description: ArgoCD auth token
     required: true
   server:
     description: "ArgoCD server domain."
     required: true
+
+  ## deprecated inputs
   manifest_file:
     description: "The manifests to be processed."
-    required: true
-    default: ".argocd*.yml"
+    deprecationMessage: "Use 'manifestFile' instead"
+    required: false
+    default: ".argocd.yml"
   dynamic_file:
     description: "Dynamic file to replace environment variables"
+    deprecationMessage: "Use 'dynamicFile' instead"
     required: false
 
 runs:
   using: "composite"
   steps:
+    - shell: bash
+      run: |
+        echo "manifestFile=${{ inputs.manifestFile || inputs.manifest_file }}" >> $GITHUB_ENV
+        echo "dynamicFile=${{ inputs.dynamicFile || inputs.dynamic_file }}" >> $GITHUB_ENV
+
     - name: Replace vars
       run: |
-        echo "Current ArgoCD file is:"
-        cat ${{ inputs.manifest_file }}
+        MANIFEST="${{ env.manifestFile }}"
+        DYNAMIC="${{ env.dynamicFile }}"
 
-        echo "Replacing manifest file with variables"
-        tmp=$(mktemp)
-        envsubst < ${{ inputs.manifest_file }} > $tmp
-        cat $tmp > ${{ inputs.manifest_file }}
-        echo "Argo file after replacement: "
-        cat ${{ inputs.manifest_file }}
-        echo "Replacing dynamic files:"
-        tmp=$(mktemp)
-        envsubst < ${{ inputs.dynamic_file }} > $tmp
-        cat $tmp > ${{ inputs.dynamic_file }}
-        cat ${{ inputs.dynamic_file }}
+        echo
+        echo "Current ArgoCD file: ${MANIFEST}"
+        echo "---"
+        cat "${MANIFEST}"
 
+        echo
+        echo "Replacing manifest file with variables..."
+
+        tmp="$(mktemp)"
+
+        envsubst < "${MANIFEST}" > "${tmp}"
+        cat "${tmp}" > "${MANIFEST}"
+
+        echo
+        echo "Argo file after replacement:"
+        echo "---"
+        cat "${MANIFEST}"
+
+        if [ -s "${DYNAMIC}" ]; then
+            tmp="$(mktemp)"
+
+            envsubst < "${DYNAMIC}" > "${tmp}"
+            cat "${tmp}" > "${DYNAMIC}"
+
+            echo
+            echo "Replacing dynamic files: ${DYNAMIC}"
+            echo "---"
+            cat "${DYNAMIC}"
+        fi
       shell: bash
 
-    - name: Run ArgoCD action
-      uses: clowdhaus/argo-cd-action/@main
-      with:
-        version: 2.1.7
-        command: app create -f ${{ inputs.manifest_file }} --values-literal-file ${{ inputs.dynamic_file }} --upsert
-        options: --grpc-web --server ${{ inputs.server }} --auth-token ${{ inputs.authToken }} 
-  
     - name: Cache oq
       id: cache-oq
       uses: actions/cache@v2
@@ -58,7 +84,7 @@ runs:
 
     - name: Download oq
       id: download-oq
-      if: steps.cache-primes.outputs.cache-hit != 'true'
+      if: steps.cache-oq.outputs.cache-hit != 'true'
       run: |
         wget https://github.com/Blacksmoke16/oq/releases/download/v0.2.1/oq-0.2.1-linux-x86_64 -O /tmp/oq &>> /dev/null && chmod +x /tmp/oq
       shell: bash
@@ -66,7 +92,7 @@ runs:
     - name: Extract app name
       id: app
       run: |
-        app=$(/tmp/oq -r -i yaml .metadata.name ${{ inputs.manifest_file }})
+        app=$(/tmp/oq -r -i yaml .metadata.name ${{ env.manifestFile }})
         echo "::set-output name=appName::$app"
       shell: bash
 
@@ -74,6 +100,12 @@ runs:
       uses: clowdhaus/argo-cd-action/@main
       with:
         version: 2.1.7
+        command: app create -f ${{ env.manifestFile }} --values-literal-file ${{ env.dynamicFile }} --upsert
+        options: --grpc-web --server ${{ inputs.server }} --auth-token ${{ inputs.authToken }}
+
+    - name: Run ArgoCD action
+      uses: clowdhaus/argo-cd-action/@main
+      with:
+        version: 2.1.7
         command: app wait ${{ steps.app.outputs.appName }} --timeout ${{ inputs.argocdTimeout }}
-        options: --grpc-web --server ${{ inputs.server }} --auth-token ${{ inputs.authToken }} 
-    
+        options: --grpc-web --server ${{ inputs.server }} --auth-token ${{ inputs.authToken }}

@@ -21,7 +21,7 @@ inputs:
 runs:
   using: "composite"
   steps:
-### NodeJS 
+    ### NodeJS
     - uses: actions/setup-node@v2
       if: ${{ inputs.language == 'node' }}
       id: setup
@@ -30,16 +30,15 @@ runs:
         cache: ${{ inputs.cache }}
 
     - run: |
-          grep -q @hipagesgroup yarn.lock && echo //npm.pkg.github.com/:_authToken=${{ inputs.npm-token }} >> .npmrc || true
+        grep -q @hipagesgroup yarn.lock && echo //npm.pkg.github.com/:_authToken=${{ inputs.npm-token }} >> .npmrc || true
       if: ${{ inputs.language == 'node' && inputs.npm-token }}
       shell: bash
 
     - run: ${{ inputs.install }}
       if: ${{ inputs.language == 'node' }}
       shell: bash
-    
 
-  ### PHP 
+    ### PHP
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       if: ${{ inputs.language == 'php' }}
@@ -66,7 +65,7 @@ runs:
       if: steps.composer-cache.outputs.cache-hit != 'true' && ${{ inputs.language == 'php' }}
       shell: bash
 
-  ### Python
+    ### Python
     - uses: actions/setup-python@v2
       if: ${{ inputs.language == 'python' }}
       with:
@@ -75,4 +74,3 @@ runs:
     - run: ${{ inputs.install }}
       if: ${{ inputs.language == 'python' }}
       shell: bash
-

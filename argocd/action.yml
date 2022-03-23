@@ -25,7 +25,6 @@ inputs:
     description: "The manifests to be processed."
     deprecationMessage: "Use 'manifestFile' instead"
     required: false
-    default: ".argocd.yml"
   dynamic_file:
     description: "Dynamic file to replace environment variables"
     deprecationMessage: "Use 'dynamicFile' instead"

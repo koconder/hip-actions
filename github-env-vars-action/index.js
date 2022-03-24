@@ -66,6 +66,23 @@ function shouldSkipDeploy(branch, prTitle) {
   return branch.toLowerCase().includes('skipdeploy');
 }
 
+/**
+ *  Use OktoKit to get the team owner of a Github repository
+ * @param {string} token 
+ * @param {string} owner 
+ * @param {string} repository 
+ */
+function getRepositoryTeams(token, owner, repositorySlug) {
+  
+  const octokit = new github.getOctokit(token);
+  const response =  octokit.request('GET /repos/{owner}/{repo}/teams', {
+    owner: owner,
+    repo: repositorySlug
+  })
+
+  return response.length != 0 ? response[0].slug : null;
+}
+
 // https://docs.github.com/en/free-pro-team@latest/actions/reference/environment-variables#default-environment-variables
 
 try {
@@ -315,6 +332,20 @@ try {
     core.exportVariable('CI_HIPAGES_SKIP_DEPLOY', true);
     core.info(`Setting CI_HIPAGES_SKIP_DEPLOY to true`);
   }
+
+  const githubToken = core.getInput("token");
+  const owner = process.env.CI_REPOSITORY_OWNER;
+  const repositorySlug = process.env.CI_REPOSITORY_SLUG
+
+  //Define CI_HIPAGES_TEAM_OWNER to be the team owning the repository
+  teamOwner = getRepositoryTeams(githubToken, owner, repositorySlug);
+  if (teamOwner) {
+    core.exportVariable('CI_HIPAGES_TEAM_OWNER',teamOwner);
+    core.info(`Set CI_HIPAGES_TEAM_OWNER=${teamOwner}`);
+  } else {
+    core.info(`Variable CI_HIPAGES_TEAM_OWNER not set, values was=${teamOwner}`);
+  }
+  
 } catch (error) {
   core.setFailed(error.message);
 }

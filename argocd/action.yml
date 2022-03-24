@@ -9,7 +9,6 @@ inputs:
   manifestFile:
     description: "The manifests to be processed."
     required: true
-    default: ".argocd.yaml"
   dynamicFile:
     description: "Dynamic file to replace environment variables"
     required: false

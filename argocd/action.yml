@@ -6,12 +6,6 @@ inputs:
     description: ArgoCD app creation timeout
     required: false
     default: "300"
-  manifestFile:
-    description: "The manifests to be processed."
-    required: true
-  dynamicFile:
-    description: "Dynamic file to replace environment variables"
-    required: false
   authToken:
     description: ArgoCD auth token
     required: true
@@ -22,11 +16,9 @@ inputs:
   ## deprecated inputs
   manifest_file:
     description: "The manifests to be processed."
-    deprecationMessage: "Use 'manifestFile' instead"
-    required: false
+    required: true
   dynamic_file:
     description: "Dynamic file to replace environment variables"
-    deprecationMessage: "Use 'dynamicFile' instead"
     required: false
 
 runs:
@@ -34,8 +26,8 @@ runs:
   steps:
     - shell: bash
       run: |
-        echo "manifestFile=${{ inputs.manifest_file || inputs.manifestFile }}" >> $GITHUB_ENV
-        echo "dynamicFile=${{ inputs.dynamic_file || inputs.dynamicFile }}" >> $GITHUB_ENV
+        echo "manifestFile=${{ inputs.manifest_file }}" >> $GITHUB_ENV
+        echo "dynamicFile=${{ inputs.dynamic_file }}" >> $GITHUB_ENV
 
     - name: Replace vars
       run: |

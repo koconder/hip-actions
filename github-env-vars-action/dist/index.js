@@ -78,15 +78,15 @@ function shouldSkipDeploy(branch, prTitle) {
  * @param {string} owner 
  * @param {string} repository 
  */
-function getRepositoryTeams(token, owner, repositorySlug) {
+async function getRepositoryTeams(token, owner, repositorySlug) {
   
   const octokit = new github.getOctokit(token);
-  const response =  octokit.request('GET /repos/{owner}/{repo}/teams', {
+  const response = await octokit.repos.listTeams({
     owner: owner,
-    repo: repositorySlug
-  })
+    repo: repositorySlug,
+  });
 
-  return response.length != 0 ? response[0].slug : null;
+  return response.data.length != 0 ? response.data[0].slug : null;
 }
 
 // https://docs.github.com/en/free-pro-team@latest/actions/reference/environment-variables#default-environment-variables
@@ -341,17 +341,18 @@ try {
 
   const githubToken = core.getInput("token");
   const owner = process.env.CI_REPOSITORY_OWNER;
-  const repositorySlug = process.env.CI_REPOSITORY_SLUG
+  const repositorySlug = process.env.CI_REPOSITORY_SLUG;
 
   //Define CI_HIPAGES_TEAM_OWNER to be the team owning the repository
-  teamOwner = getRepositoryTeams(githubToken, owner, repositorySlug);
-  if (teamOwner) {
-    core.exportVariable('CI_HIPAGES_TEAM_OWNER',teamOwner);
-    core.info(`Set CI_HIPAGES_TEAM_OWNER=${teamOwner}`);
-  } else {
-    core.info(`Variable CI_HIPAGES_TEAM_OWNER not set, values was=${teamOwner}`);
-  }
-  
+  getRepositoryTeams(githubToken, owner, repositorySlug)
+    .then(teamOwner => {
+      core.exportVariable('CI_HIPAGES_TEAM_OWNER',teamOwner);
+      core.info(`Set CI_HIPAGES_TEAM_OWNER=${teamOwner}`);
+    })
+    .catch(err => {
+      core.info(`Variable CI_HIPAGES_TEAM_OWNER not set, values was=${err}`);
+    });
+
 } catch (error) {
   core.setFailed(error.message);
 }

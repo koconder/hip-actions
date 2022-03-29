@@ -17,6 +17,10 @@ inputs:
   install:
     description: Application install command ( eg. yarn install / composer install / pip install )
     required: true
+  php-tools:
+    required: false
+    description: PHP tools to be installed when using shivammathur/setup-php
+    default: "composer:v1"
 
 runs:
   using: "composite"
@@ -44,6 +48,7 @@ runs:
       if: ${{ inputs.language == 'php' }}
       with:
         php-version: ${{ inputs.version }}
+        tools: ${{ inputs.php-tools }}
 
     - name: Get Composer Cache Directory
       if: ${{ inputs.language == 'php' }}

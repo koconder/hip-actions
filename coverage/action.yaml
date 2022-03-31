@@ -3,6 +3,7 @@ description: Merge and upload code coverage
 
 inputs:
   coverage_dir:
+    description: Output directory for coverage files
     required: true
 
 runs:

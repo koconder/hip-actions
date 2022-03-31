@@ -24,6 +24,7 @@ inputs:
   # GHCR token
   github-token:
     description: GITHUB_TOKEN
+    default: ${{ github.token }}
     required: false
   npm-token:
     description: NPM PAT to use yarn hipagesgroup packages

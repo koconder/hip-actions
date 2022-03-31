@@ -3,17 +3,24 @@ description: Runs Code quality checks
 
 inputs:
   wait:
-    required: false
+    description: Wait for quality gate to pass
     default: false
+    required: false
   coverage_file:
+    description: Code coverage file
     required: true
   sonar_server:
+    description: Sonarqube \ SonarCloud server URL
     required: false
   sonar_token:
+    description: Sonarqube \ SonarCloud access token
     required: true
   github_token:
+    description: Github access token
     required: true
+    default: ${{ github.token }}
   coverage_dir:
+    description: Directory with code coverage artifacts
     required: true
 
 runs:

@@ -1,6 +1,11 @@
 name: "Gatekeeper"
 description: "hipages CI gatekeeper"
-author: ""
+author: "https://github.com/viniciusps"
+inputs:
+  token:
+    description: GitHub token
+    default: ${{ github.token }}
+    required: false
 runs:
   using: "node12"
   main: "dist/index.js"

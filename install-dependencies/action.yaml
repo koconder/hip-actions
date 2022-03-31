@@ -61,7 +61,9 @@ runs:
       if: ${{ inputs.language == 'php' }}
       id: composer-cache
       with:
-        path: ${{ steps.composer-cache-dir.outputs.dir }}
+        path: |
+          **/vendor
+          ${{ steps.composer-cache-dir.outputs.dir }}
         key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
         restore-keys: |
           ${{ runner.os }}-composer-

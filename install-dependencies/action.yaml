@@ -57,7 +57,7 @@ runs:
         echo "::set-output name=dir::$(composer config cache-files-dir)"
       shell: bash
 
-    - uses: actions/cache@v2
+    - uses: actions/cache@v3
       if: ${{ inputs.language == 'php' }}
       id: composer-cache
       with:

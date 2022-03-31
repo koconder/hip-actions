@@ -31,6 +31,14 @@ runs:
         name: coverage
         path: ${{ inputs.coverage_dir }}
 
+    - uses: actions/cache@v2
+      id: sonar-cache
+      with:
+        path: /opt/sonar-scanner/.sonar/cache
+        key: ${{ runner.os }}-sonar-${{ hashFiles('**/sonar-project.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-sonar-
+
     - name: Analyze with SonarCloud
       uses: sonarsource/sonarcloud-github-action@master
       with:

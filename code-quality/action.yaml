@@ -54,13 +54,13 @@ runs:
       run: |
         export SONAR_TOKEN=${{ inputs.sonar_token }}
         sonar-scanner \
-          -Dsonar.organization=${{ env.CI_REPOSITORY_OWNER_SLUG }}
-          -Dsonar.projectKey=${{ env.CI_REPOSITORY_OWNER_SLUG }}_${{ env.CI_REPOSITORY_NAME_SLUG }}
-          -Dsonar.projectVersion=${{ env.CI_SHA_SHORT }}
-          -Dsonar.links.scm=${{ env.GITHUB_SERVER_URL }}/${{ env.GITHUB_REPOSITORY }}
-          -Dsonar.links.ci=${{ env.GITHUB_SERVER_URL }}/${{ env.GITHUB_REPOSITORY }}/actions/runs/${{ env.GITHUB_RUN_ID }}
-          -Dsonar.javascript.lcov.reportPaths=${{ inputs.coverage_dir }}/${{ inputs.coverage_file }}
-          -Dsonar.sources=.
+          -Dsonar.organization=${{ env.CI_REPOSITORY_OWNER_SLUG }} \
+          -Dsonar.projectKey=${{ env.CI_REPOSITORY_OWNER_SLUG }}_${{ env.CI_REPOSITORY_NAME_SLUG }} \
+          -Dsonar.projectVersion=${{ env.CI_SHA_SHORT }} \
+          -Dsonar.links.scm=${{ env.GITHUB_SERVER_URL }}/${{ env.GITHUB_REPOSITORY }} \
+          -Dsonar.links.ci=${{ env.GITHUB_SERVER_URL }}/${{ env.GITHUB_REPOSITORY }}/actions/runs/${{ env.GITHUB_RUN_ID }} \
+          -Dsonar.javascript.lcov.reportPaths=${{ inputs.coverage_dir }}/${{ inputs.coverage_file }} \
+          -Dsonar.sources=. \
           -Dsonar.host.url=https://sonarcloud.io
       shell: bash
 

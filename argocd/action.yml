@@ -64,6 +64,13 @@ runs:
             cat "${DYNAMIC}"
         fi
       shell: bash
+      
+    - uses: actions/upload-artifact@v3
+      with:
+        name: argocd
+        path: |
+          ${{ env.manifestFile }}
+          ${{ env.dynamicFile }}
 
     - name: Cache oq
       id: cache-oq

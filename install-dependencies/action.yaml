@@ -69,7 +69,7 @@ runs:
           ${{ runner.os }}-composer-
 
     - run: ${{ inputs.install }}
-      if: steps.composer-cache.outputs.cache-hit != 'true' && ${{ inputs.language == 'php' }}
+      if: ${{ inputs.language == 'php' }}
       shell: bash
 
     ### Python

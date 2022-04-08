@@ -42,7 +42,7 @@ runs:
     - name: Run fix coverage path
       shell: bash
       working-directory: ${{ inputs.coverage_dir }}
-      run: sed -i "s~$GITHUB_WORKSPACE~/github/workspace~g" *
+      run: sed -i "s~$GITHUB_WORKSPACE~/github/workspace~g" *.xml
 
     - uses: actions/cache@v2
       id: sonar-cache

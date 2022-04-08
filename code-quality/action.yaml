@@ -21,7 +21,7 @@ inputs:
     default: ${{ github.token }}
   coverage_dir:
     description: Directory with code coverage artifacts
-    default: ${{ env.RUNNER_TEMP }}/coverage
+    default: ${{ runner.temp }}/_github_workflow/coverage
     required: true
 
 runs:
@@ -40,6 +40,7 @@ runs:
         path: ${{ inputs.coverage_dir }}
 
     - name: Run fix coverage path
+      shell: bash
       working-directory: ${{ inputs.coverage_dir }}
       run: sed -i "s~$GITHUB_WORKSPACE~/github/workspace~g" *
 

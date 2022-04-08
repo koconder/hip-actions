@@ -21,7 +21,7 @@ inputs:
     default: ${{ github.token }}
   coverage_dir:
     description: Directory with code coverage artifacts
-    default: coverage
+    default: /tmp/coverage
     required: true
 
 runs:

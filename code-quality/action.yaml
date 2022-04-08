@@ -21,7 +21,7 @@ inputs:
     default: ${{ github.token }}
   coverage_dir:
     description: Directory with code coverage artifacts
-    default: /tmp/coverage
+    default: ${{ env.RUNNER_TEMP }}/coverage
     required: true
 
 runs:
@@ -38,6 +38,10 @@ runs:
       with:
         name: coverage
         path: ${{ inputs.coverage_dir }}
+
+    - name: Run fix coverage path
+      working-directory: ${{ inputs.coverage_dir }}
+      run: sed -i "s~$GITHUB_WORKSPACE~/github/workspace~g" *
 
     - uses: actions/cache@v2
       id: sonar-cache

@@ -34,6 +34,8 @@ runs:
         cache: ${{ inputs.cache }}
 
     - run: |
+        cat .npmrc
+        echo "----"
         echo >> .npmrc
         grep -q @hipagesgroup yarn.lock && echo "//npm.pkg.github.com/:_authToken=${{ inputs.npm-token }}" >> .npmrc || true
         cat .npmrc

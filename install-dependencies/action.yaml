@@ -34,7 +34,9 @@ runs:
         cache: ${{ inputs.cache }}
 
     - run: |
-        grep -q @hipagesgroup yarn.lock && echo "\n//npm.pkg.github.com/:_authToken=${{ inputs.npm-token }}" >> .npmrc || true
+        echo >> .npmrc
+        echo "@hipagesgroup:registry=https://npm.pkg.github.com/" >> .npmrc
+        echo "//npm.pkg.github.com/:_authToken=${{ inputs.npm-token }}" >> .npmrc
       if: ${{ inputs.language == 'node' && inputs.npm-token }}
       shell: bash
 

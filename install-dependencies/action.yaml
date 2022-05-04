@@ -36,6 +36,7 @@ runs:
     - run: |
         echo >> .npmrc
         grep -q @hipagesgroup yarn.lock && echo "//npm.pkg.github.com/:_authToken=${{ inputs.npm-token }}" >> .npmrc || true
+        cat .npmrc
       if: ${{ inputs.language == 'node' && inputs.npm-token }}
       shell: bash
 

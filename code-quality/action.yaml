@@ -8,7 +8,8 @@ inputs:
     required: false
   coverage_file:
     description: Code coverage file
-    required: true
+    default: ""
+    required: false
   sonar_server:
     description: Sonarqube \ SonarCloud server URL
     required: false
@@ -51,9 +52,25 @@ runs:
         key: ${{ runner.os }}-sonar-${{ hashFiles('**/sonar-project.properties') }}
         restore-keys: |
           ${{ runner.os }}-sonar-
-
+    
     - name: Analyze with SonarCloud
       uses: sonarsource/sonarcloud-github-action@master
+      if: ${{ inputs.coverage_file == '' }}
+      with:
+        args: >
+          -Dsonar.organization=${{ env.CI_REPOSITORY_OWNER_SLUG }}
+          -Dsonar.projectKey=${{ env.CI_REPOSITORY_OWNER_SLUG }}_${{ env.CI_REPOSITORY_NAME_SLUG }}
+          -Dsonar.projectVersion=${{ env.CI_SHA_SHORT }}
+          -Dsonar.links.scm=${{ env.GITHUB_SERVER_URL }}/${{ env.GITHUB_REPOSITORY }}
+          -Dsonar.links.ci=${{ env.GITHUB_SERVER_URL }}/${{ env.GITHUB_REPOSITORY }}/actions/runs/${{ env.GITHUB_RUN_ID }}
+          -Dsonar.sources=.
+      env:
+        GITHUB_TOKEN: ${{ inputs.github_token }}
+        SONAR_TOKEN: ${{ inputs.sonar_token }}
+     
+    - name: Analyze with SonarCloud
+      uses: sonarsource/sonarcloud-github-action@master
+      if: ${{ inputs.coverage_file != '' }}
       with:
         args: >
           -Dsonar.organization=${{ env.CI_REPOSITORY_OWNER_SLUG }}

@@ -29,7 +29,7 @@ runs:
   steps:
     - shell: bash
       run: |
-        printf "branchFile=${{ inputs.branch_file }}" "${CI_HIPAGES_BRANCH_SLUG:-$CI_ACTION_REF_NAME_SLUG}" >> $GITHUB_ENV
+        printf "branchFile=${{ inputs.branch_file }}\n" "${CI_HIPAGES_BRANCH_SLUG:-$CI_ACTION_REF_NAME_SLUG}" >> $GITHUB_ENV
         
         echo "manifestFile=${{ inputs.manifest_file }}" >> $GITHUB_ENV
         echo "dynamicFile=${{ inputs.dynamic_file }}" >> $GITHUB_ENV

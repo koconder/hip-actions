@@ -105,13 +105,13 @@ runs:
     - name: Run ArgoCD action
       uses: clowdhaus/argo-cd-action/@main
       with:
-        version: 2.1.7
+        version: 2.3.3
         command: app create -f ${{ env.manifestFile }} --values-literal-file ${{ env.dynamicFile }} --ignore-missing-value-files --upsert
         options: --grpc-web --server ${{ inputs.server }} --auth-token ${{ inputs.authToken }}
 
     - name: Run ArgoCD action
       uses: clowdhaus/argo-cd-action/@main
       with:
-        version: 2.1.7
+        version: 2.3.3
         command: app wait ${{ steps.app.outputs.appName }} --timeout ${{ inputs.argocdTimeout }}
         options: --grpc-web --server ${{ inputs.server }} --auth-token ${{ inputs.authToken }}

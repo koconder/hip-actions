@@ -22,14 +22,14 @@ inputs:
   branch_file:
     description: "The file for this specific branch"
     required: false
-    default: "helm/values.dev.branch.yaml"
+    default: "helm/values.dev.%s.yaml"
 
 runs:
   using: "composite"
   steps:
     - shell: bash
       run: |
-        touch "${{ inputs.branch_file }}" &>/dev/null || true
+        touch $(printf "${{ inputs.branch_file }}" $CI_ACTION_REF_NAME_SLUG) &>/dev/null || true
         
         echo "manifestFile=${{ inputs.manifest_file }}" >> $GITHUB_ENV
         echo "dynamicFile=${{ inputs.dynamic_file }}" >> $GITHUB_ENV

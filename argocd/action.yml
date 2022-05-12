@@ -29,7 +29,7 @@ runs:
   steps:
     - shell: bash
       run: |
-        touch $(printf "${{ inputs.branch_file }}" "${CI_HIPAGES_BRANCH_SLUG:-$CI_ACTION_REF_NAME_SLUG}") || true
+        printf "branchFile=${{ inputs.branch_file }}" "${CI_HIPAGES_BRANCH_SLUG:-$CI_ACTION_REF_NAME_SLUG}" >> $GITHUB_ENV
         
         echo "manifestFile=${{ inputs.manifest_file }}" >> $GITHUB_ENV
         echo "dynamicFile=${{ inputs.dynamic_file }}" >> $GITHUB_ENV
@@ -38,7 +38,11 @@ runs:
       run: |
         MANIFEST="${{ env.manifestFile }}"
         DYNAMIC="${{ env.dynamicFile }}"
+        BRANCH="${{ env.branchFile }}"
 
+        touch $BRANCH || true
+        touch $DYNAMIC || true
+        
         echo
         echo "Current ArgoCD file: ${MANIFEST}"
         echo "---"
@@ -64,7 +68,7 @@ runs:
             cat "${tmp}" > "${DYNAMIC}"
 
             echo
-            echo "Replacing dynamic files: ${DYNAMIC}"
+            echo "Replacing dynamic file: ${DYNAMIC}"
             echo "---"
             cat "${DYNAMIC}"
         fi
@@ -102,7 +106,7 @@ runs:
       uses: clowdhaus/argo-cd-action/@main
       with:
         version: 2.1.7
-        command: app create -f ${{ env.manifestFile }} --values-literal-file ${{ env.dynamicFile }} --upsert
+        command: app create -f ${{ env.manifestFile }} --values-literal-file ${{ env.dynamicFile }} --ignore-missing-value-files --upsert
         options: --grpc-web --server ${{ inputs.server }} --auth-token ${{ inputs.authToken }}
 
     - name: Run ArgoCD action

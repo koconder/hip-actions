@@ -12,20 +12,25 @@ inputs:
   server:
     description: "ArgoCD server domain."
     required: true
-
-  ## deprecated inputs
+  
   manifest_file:
     description: "The manifests to be processed."
     required: true
   dynamic_file:
     description: "Dynamic file to replace environment variables"
     required: false
+  branch_file:
+    description: "The file for this specific branch"
+    required: false
+    default: "helm/values.dev.branch.yaml"
 
 runs:
   using: "composite"
   steps:
     - shell: bash
       run: |
+        touch "${{ inputs.branch_file }}" &>/dev/null || true
+        
         echo "manifestFile=${{ inputs.manifest_file }}" >> $GITHUB_ENV
         echo "dynamicFile=${{ inputs.dynamic_file }}" >> $GITHUB_ENV
 

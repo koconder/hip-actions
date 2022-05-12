@@ -31,6 +31,8 @@ runs:
       run: |
         touch $(printf "${{ inputs.branch_file }}" "${CI_HIPAGES_BRANCH_SLUG:-$CI_ACTION_REF_NAME_SLUG}") || true
         
+        ls -la helm/
+        
         echo "manifestFile=${{ inputs.manifest_file }}" >> $GITHUB_ENV
         echo "dynamicFile=${{ inputs.dynamic_file }}" >> $GITHUB_ENV
 

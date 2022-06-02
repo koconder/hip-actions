@@ -83,7 +83,7 @@ runs:
 
     - name: Cache oq
       id: cache-oq
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: /tmp/oq
         key: ${{ runner.os }}-oq

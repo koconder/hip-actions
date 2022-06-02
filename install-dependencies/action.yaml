@@ -75,7 +75,7 @@ runs:
       shell: bash
 
     ### Python
-    - uses: actions/setup-python@v2
+    - uses: actions/setup-python@v3
       if: ${{ inputs.language == 'python' }}
       with:
         python-version: ${{ inputs.version }}

@@ -75,6 +75,13 @@ runs:
       shell: bash
 
     ### Python
+    - uses: actions/cache@v3
+      if: ${{ inputs.language == 'python' }}
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements*.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
     - uses: actions/setup-python@v3
       if: ${{ inputs.language == 'python' }}
       with:

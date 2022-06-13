@@ -82,7 +82,7 @@ runs:
         key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements*.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
-    - uses: actions/setup-python@v3
+    - uses: actions/setup-python@v4
       if: ${{ inputs.language == 'python' }}
       with:
         python-version: ${{ inputs.version }}

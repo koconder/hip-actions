@@ -61,6 +61,7 @@ runs:
 
     - uses: actions/cache@v3
       if: ${{ inputs.language == 'php' }}
+      continue-on-error: true
       id: composer-cache
       with:
         path: |
@@ -77,6 +78,7 @@ runs:
     ### Python
     - uses: actions/cache@v3
       if: ${{ inputs.language == 'python' }}
+      continue-on-error: true
       with:
         path: ~/.cache/pip
         key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements*.txt') }}

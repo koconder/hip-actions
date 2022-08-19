@@ -50,6 +50,7 @@ runs:
       if: ${{ inputs.language == 'php' }}
       with:
         php-version: ${{ inputs.version }}
+        coverage: xdebug2
         tools: ${{ inputs.php-tools }}
 
     - name: Get Composer Cache Directory

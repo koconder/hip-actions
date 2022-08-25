@@ -40,10 +40,12 @@ runs:
         name: coverage
         path: ${{ inputs.coverage_dir }}
 
-    - name: Run fix coverage path
+    - name: Run fix coverage path for PHP & Javascript/TS
       shell: bash
       working-directory: ${{ inputs.coverage_dir }}
-      run: find . -type f -name "*.xml" -exec sed -i "s~$GITHUB_WORKSPACE~/github/workspace~g" {} +
+      run: |
+        find . -type f -name "*.xml" -exec sed -i "s~$GITHUB_WORKSPACE~/github/workspace~g" {} +
+        find . -type f -name "*.info" -exec sed -i "s~$GITHUB_WORKSPACE~/github/workspace~g" {} +
 
     - uses: actions/cache@v2
       id: sonar-cache

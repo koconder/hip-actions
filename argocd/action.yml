@@ -23,6 +23,70 @@ inputs:
     description: "The file for this specific branch"
     required: false
     default: "helm/values.dev.%s.yaml"
+  alert_channel:
+    description: "Slack channel where failed build messages will be sent to"
+    required: false
+    default: ""
+  notify_on_failed_builds:
+    description: "Whether you want to get notification via slack for failed builds or not (true or false)"
+    required: false
+    default: false
+  slack_notifications_bot_token:
+    description: "token to be used for sending slack notifications"
+  slack_custom_message:
+    description: "Message to be displayed in slack"
+    required: false
+    default: |
+        {
+          "attachments": [
+            {
+              "color": "#ff0000",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "ArgoCD deployment for repository: ${{ github.event.repository.name }}"
+                  }
+                },
+                {
+                  "type": "section",
+                  "block_id": "1",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "Execution URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                  }
+                },
+                {
+                  "type": "section",
+                  "block_id": "2",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "Commit URL: ${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+                  }
+                },
+                {
+                  "type": "section",
+                  "block_id": "3",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "Author: ${{ github.actor }}"
+                  }
+                },
+                {
+                  "type": "section",
+                  "block_id": "4",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Build status: *\nFailed"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
 
 runs:
   using: "composite"
@@ -115,3 +179,13 @@ runs:
         version: 2.3.3
         command: app wait ${{ steps.app.outputs.appName }} --timeout ${{ inputs.argocdTimeout }}
         options: --grpc-web --server ${{ inputs.server }} --auth-token ${{ inputs.authToken }}
+    - name: Post to a Slack channel
+      id: slack
+      if: ${{ failure() && inputs.notify_on_failed_builds && inputs.alert_channel && inputs.slack_notifications_bot_token }}
+      uses: slackapi/slack-github-action@v1.21.0
+      with:
+        channel-id: ${{ inputs.alert_channel }}
+        payload: |
+         ${{ inputs.slack_custom_message }}
+      env:
+        SLACK_BOT_TOKEN: ${{ inputs.slack_notifications_bot_token }}

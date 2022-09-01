@@ -73,13 +73,13 @@ runs:
       uses: docker/metadata-action@v4
       with:
         images: |
-          ${{ github.repository }}
           ${{ inputs.registry_url }}/${{ github.repository }}
         tags: |
           # ensure backwards compatibility
           type=raw,value=${{ env.CI_SHA_SHORT }}
           # set latest tag for default branch
           type=raw,value=latest,enable={{is_default_branch}}
+          type=raw,value={{branch}}
           type=ref,event=branch
           type=ref,event=pr
           type=sha

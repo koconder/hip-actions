@@ -12,7 +12,7 @@ inputs:
   server:
     description: "ArgoCD server domain."
     required: true
-  
+
   manifest_file:
     description: "The manifests to be processed."
     required: true
@@ -37,56 +37,57 @@ inputs:
     description: "Message to be displayed in slack"
     required: false
     default: |
-        {
-          "attachments": [
-            {
-              "color": "#ff0000",
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "ArgoCD deployment for repository: ${{ github.event.repository.name }}"
-                  }
-                },
-                {
-                  "type": "section",
-                  "block_id": "1",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "Execution URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-                  }
-                },
-                {
-                  "type": "section",
-                  "block_id": "2",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "Commit URL: ${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
-                  }
-                },
-                {
-                  "type": "section",
-                  "block_id": "3",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "Author: ${{ github.actor }}"
-                  }
-                },
-                {
-                  "type": "section",
-                  "block_id": "4",
-                  "fields": [
-                    {
-                      "type": "mrkdwn",
-                      "text": "*Build status: *\nFailed"
-                    }
-                  ]
+      {
+        "attachments": [
+          {
+            "color": "#ff0000",
+            "blocks": [
+              {
+                "type": "header",
+                "text": {
+                  "type": "plain_text",
+                  "text": "ArgoCD deployment: ${{ github.event.repository.name }}",
+                  "emoji": false
                 }
-              ]
-            }
-          ]
-        }
+              },
+              {
+                "type": "section",
+                "block_id": "1",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "*Execution URL:* ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                }
+              },
+              {
+                "type": "section",
+                "block_id": "2",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "*Commit URL:* ${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+                }
+              },
+              {
+                "type": "section",
+                "block_id": "3",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "*Author:* ${{ github.actor }}"
+                }
+              },
+              {
+                "type": "section",
+                "block_id": "4",
+                "fields": [
+                  {
+                    "type": "mrkdwn",
+                    "text": "*Build status:* :warning: Failed"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
 
 runs:
   using: "composite"
@@ -94,7 +95,7 @@ runs:
     - shell: bash
       run: |
         printf "branchFile=${{ inputs.branch_file }}\n" "${CI_HIPAGES_BRANCH_SLUG:-$CI_ACTION_REF_NAME_SLUG}" >> $GITHUB_ENV
-        
+
         echo "manifestFile=${{ inputs.manifest_file }}" >> $GITHUB_ENV
         echo "dynamicFile=${{ inputs.dynamic_file }}" >> $GITHUB_ENV
 
@@ -106,7 +107,7 @@ runs:
 
         touch $BRANCH || true
         touch $DYNAMIC || true
-        
+
         echo
         echo "Current ArgoCD file: ${MANIFEST}"
         echo "---"
@@ -137,7 +138,7 @@ runs:
             cat "${DYNAMIC}"
         fi
       shell: bash
-      
+
     - uses: actions/upload-artifact@v3
       with:
         name: argocd
@@ -186,6 +187,6 @@ runs:
       with:
         channel-id: ${{ inputs.alert_channel }}
         payload: |
-         ${{ inputs.slack_custom_message }}
+          ${{ inputs.slack_custom_message }}
       env:
         SLACK_BOT_TOKEN: ${{ inputs.slack_notifications_bot_token }}

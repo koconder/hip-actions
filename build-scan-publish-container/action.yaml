@@ -57,7 +57,7 @@ runs:
       if: ${{ inputs.registry == 'ghcr' }}
       with:
         registry: ${{ inputs.registry_url }}
-        username: hip-ci
+        username: ${{ github.actor }}
         password: ${{ inputs.github-token }}
 
     - name: Configure AWS credentials

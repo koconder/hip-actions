@@ -21,6 +21,10 @@ inputs:
     description: AWS Region
     required: false
 
+  docker-user:
+    description: Username for Docker login
+    default: hip-ci
+    required: false
   # GHCR token
   github-token:
     description: GITHUB_TOKEN
@@ -57,7 +61,7 @@ runs:
       if: ${{ inputs.registry == 'ghcr' }}
       with:
         registry: ${{ inputs.registry_url }}
-        username: ${{ github.actor }}
+        username: ${{ inputs.docker-user }}
         password: ${{ inputs.github-token }}
 
     - name: Configure AWS credentials

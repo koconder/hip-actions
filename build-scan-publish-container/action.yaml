@@ -100,6 +100,7 @@ runs:
       uses: docker/build-push-action@v3
       if: ${{ inputs.registry == 'ghcr' }}
       with:
+        context: .
         pull: false
         push: true
         cache-from: type=gha
@@ -114,6 +115,7 @@ runs:
       uses: docker/build-push-action@v2
       if: ${{ inputs.registry == 'ecr' }}
       with:
+        context: .
         pull: true
         push: true
         cache-from: type=registry,ref=${{ inputs.registry_url }}/${{ github.repository }}:latest

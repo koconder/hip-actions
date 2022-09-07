@@ -100,7 +100,6 @@ runs:
       uses: docker/build-push-action@v3
       if: ${{ inputs.registry == 'ghcr' }}
       with:
-        context: .
         pull: false
         push: true
         cache-from: type=gha

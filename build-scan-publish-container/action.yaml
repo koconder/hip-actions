@@ -79,10 +79,10 @@ runs:
           type=raw,value=${{ env.CI_SHA_SHORT }}
           # set latest tag for default branch
           #type=raw,value=latest,enable={{is_default_branch}}
-          type=raw,value={{branch}}
-          type=ref,event=branch
-          type=ref,event=pr
-          type=sha
+          #type=raw,value={{branch}}
+          #type=ref,event=branch
+          #type=ref,event=pr
+          #type=sha
 
     - name: Login to Amazon ECR
       id: login-ecr

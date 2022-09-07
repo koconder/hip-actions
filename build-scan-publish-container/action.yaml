@@ -56,13 +56,13 @@ runs:
       if: ${{ inputs.npm-token}}
       shell: bash
 
-#     - name: Log in to Github Container registry
-#       uses: docker/login-action@v2
-#       if: ${{ inputs.registry == 'ghcr' }}
-#       with:
-#         registry: ${{ inputs.registry_url }}
-#         username: ${{ inputs.docker-user }}
-#         password: ${{ inputs.github-token }}
+    - name: Log in to Github Container registry
+      uses: docker/login-action@v2
+      if: ${{ inputs.registry == 'ghcr' }}
+      with:
+        registry: ${{ inputs.registry_url }}
+        username: ${{ inputs.docker-user }}
+        password: ${{ inputs.github-token }}
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1

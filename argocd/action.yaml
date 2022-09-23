@@ -189,7 +189,7 @@ runs:
           --upsert
           --grpc-web
           --server ${{ inputs.server }}
-          --auth-token ${{ inputs.authToken }
+          --auth-token ${{ inputs.authToken }}
 
     - name: Wait for ArgoCD sync
       uses: clowdhaus/argo-cd-action/@main

@@ -46,10 +46,10 @@ inputs:
   build-args:
     description: Buildx build-args
     required: false
-    default: ""
+    default: ''
 
 runs:
-  using: "composite"
+  using: 'composite'
   steps:
     - run: |
         grep -q @hipagesgroup yarn.lock && echo //npm.pkg.github.com/:_authToken=${{ inputs.npm-token }} >> .npmrc || true

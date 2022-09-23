@@ -7,7 +7,7 @@ inputs:
     required: true
 
 runs:
-  using: "composite"
+  using: 'composite'
   steps:
     - name: Upload test coverage files
       uses: actions/upload-artifact@v2

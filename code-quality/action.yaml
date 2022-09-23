@@ -8,7 +8,7 @@ inputs:
     required: false
   coverage_file:
     description: Code coverage file
-    default: ""
+    default: ''
     required: false
   sonar_server:
     description: Sonarqube \ SonarCloud server URL
@@ -26,7 +26,7 @@ inputs:
     required: true
 
 runs:
-  using: "composite"
+  using: 'composite'
   steps:
     - uses: hipagesgroup/actions/github-env-vars-action@master
 
@@ -54,7 +54,7 @@ runs:
         key: ${{ runner.os }}-sonar-${{ hashFiles('**/sonar-project.properties') }}
         restore-keys: |
           ${{ runner.os }}-sonar-
-    
+
     - name: Analyze with SonarCloud
       uses: sonarsource/sonarcloud-github-action@master
       if: ${{ inputs.coverage_file == '' }}
@@ -69,7 +69,7 @@ runs:
       env:
         GITHUB_TOKEN: ${{ inputs.github_token }}
         SONAR_TOKEN: ${{ inputs.sonar_token }}
-     
+
     - name: Analyze with SonarCloud
       uses: sonarsource/sonarcloud-github-action@master
       if: ${{ inputs.coverage_file != '' }}

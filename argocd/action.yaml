@@ -1,0 +1,214 @@
+name: argocd
+description: Replace dynamic values and Deploy to argoCD
+
+inputs:
+  argocdVersion:
+    description: ArgoCD app version
+    required: false
+    default: '2.4.11'
+  argocdTimeout:
+    description: ArgoCD app creation timeout
+    required: false
+    default: '300'
+  authToken:
+    description: ArgoCD auth token
+    required: true
+  server:
+    description: ArgoCD server domain
+    required: true
+  manifest_file:
+    description: The manifests to be processed
+    required: true
+  dynamic_file:
+    description: Dynamic file to replace environment variables
+    required: false
+  branch_file:
+    description: The file for this specific branch
+    required: false
+    default: 'helm/values.dev.%s.yaml'
+  alert_channel:
+    description: Slack channel where failed build messages will be sent to
+    required: false
+    default: ''
+  notify_on_failed_builds:
+    description: Whether you want to get notification via slack for failed builds or not (true or false)
+    required: false
+    default: false
+  slack_notifications_bot_token:
+    description: token to be used for sending slack notifications
+  slack_custom_message:
+    description: Message to be displayed in slack
+    required: false
+    default: |
+      {
+        "attachments": [
+          {
+            "color": "#ff0000",
+            "blocks": [
+              {
+                "type": "header",
+                "text": {
+                  "type": "plain_text",
+                  "text": "ArgoCD deployment: ${{ github.event.repository.name }}",
+                  "emoji": false
+                }
+              },
+              {
+                "type": "section",
+                "block_id": "1",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "*Execution URL:* ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                }
+              },
+              {
+                "type": "section",
+                "block_id": "2",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "*Commit URL:* ${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+                }
+              },
+              {
+                "type": "section",
+                "block_id": "3",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "*Author:* ${{ github.actor }}"
+                }
+              },
+              {
+                "type": "section",
+                "block_id": "4",
+                "fields": [
+                  {
+                    "type": "mrkdwn",
+                    "text": "*Build status:* :warning: Failed"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+
+runs:
+  using: 'composite'
+  steps:
+    - shell: bash
+      run: |
+        printf "branchFile=${{ inputs.branch_file }}\n" "${CI_HIPAGES_BRANCH_SLUG:-$CI_ACTION_REF_NAME_SLUG}" >> $GITHUB_ENV
+
+        echo "manifestFile=${{ inputs.manifest_file }}" >> $GITHUB_ENV
+        echo "dynamicFile=${{ inputs.dynamic_file }}" >> $GITHUB_ENV
+
+    - name: Replace vars
+      run: |
+        MANIFEST="${{ env.manifestFile }}"
+        DYNAMIC="${{ env.dynamicFile }}"
+        BRANCH="${{ env.branchFile }}"
+
+        touch $BRANCH || true
+        touch $DYNAMIC || true
+
+        echo
+        echo "Current ArgoCD file: ${MANIFEST}"
+        echo "---"
+        cat "${MANIFEST}"
+
+        echo
+        echo "Replacing manifest file with variables..."
+
+        tmp="$(mktemp)"
+
+        envsubst < "${MANIFEST}" > "${tmp}"
+        cat "${tmp}" > "${MANIFEST}"
+
+        echo
+        echo "Argo file after replacement:"
+        echo "---"
+        cat "${MANIFEST}"
+
+        if [ -s "${DYNAMIC}" ]; then
+            tmp="$(mktemp)"
+
+            envsubst < "${DYNAMIC}" > "${tmp}"
+            cat "${tmp}" > "${DYNAMIC}"
+
+            echo
+            echo "Replacing dynamic file: ${DYNAMIC}"
+            echo "---"
+            cat "${DYNAMIC}"
+        fi
+      shell: bash
+
+    - uses: actions/upload-artifact@v3
+      with:
+        name: argocd
+        path: |
+          ${{ env.manifestFile }}
+          ${{ env.dynamicFile }}
+
+    - name: Cache oq
+      id: cache-oq
+      uses: actions/cache@v3
+      with:
+        path: /tmp/oq
+        key: ${{ runner.os }}-oq
+
+    - name: Download oq
+      id: download-oq
+      if: steps.cache-oq.outputs.cache-hit != 'true'
+      run: |
+        wget https://github.com/Blacksmoke16/oq/releases/download/v0.2.1/oq-0.2.1-linux-x86_64 -O /tmp/oq &>> /dev/null && chmod +x /tmp/oq
+      shell: bash
+
+    - name: Extract app name
+      id: app
+      run: |
+        app=$(/tmp/oq -r -i yaml .metadata.name ${{ env.manifestFile }})
+        echo "::set-output name=appName::$app"
+      shell: bash
+
+    - uses: clowdhaus/argo-cd-action/@main
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      with:
+        version: ${{ inputs.argocdVersion }}
+        command: version
+        options: --client
+
+    - name: Create ArgoCD application
+      uses: clowdhaus/argo-cd-action/@main
+      with:
+        version: ${{ inputs.argocdVersion }}
+        command: app create -f ${{ env.manifestFile }} --values-literal-file ${{ env.dynamicFile }}
+        options: >-
+          --ignore-missing-value-files
+          --set-finalizer
+          --upsert
+          --grpc-web
+          --server ${{ inputs.server }}
+          --auth-token ${{ inputs.authToken }
+
+    - name: Wait for ArgoCD sync
+      uses: clowdhaus/argo-cd-action/@main
+      with:
+        version: ${{ inputs.argocdVersion }}
+        command: app wait ${{ steps.app.outputs.appName }}
+        options: >-
+          --timeout ${{ inputs.argocdTimeout }}
+          --grpc-web
+          --server ${{ inputs.server }}
+          --auth-token ${{ inputs.authToken }}
+
+    - name: Post to a Slack channel
+      id: slack
+      if: ${{ failure() && inputs.notify_on_failed_builds && inputs.alert_channel && inputs.slack_notifications_bot_token }}
+      uses: slackapi/slack-github-action@v1.21.0
+      with:
+        channel-id: ${{ inputs.alert_channel }}
+        payload: |
+          ${{ inputs.slack_custom_message }}
+      env:
+        SLACK_BOT_TOKEN: ${{ inputs.slack_notifications_bot_token }}

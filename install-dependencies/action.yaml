@@ -20,10 +20,10 @@ inputs:
   php-tools:
     required: false
     description: PHP tools to be installed when using shivammathur/setup-php
-    default: "composer:v1"
+    default: 'composer:v1'
 
 runs:
-  using: "composite"
+  using: 'composite'
   steps:
     ### NodeJS
     - uses: actions/setup-node@v3

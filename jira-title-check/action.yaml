@@ -1,4 +1,4 @@
-name: jira-title-check
+name: 'Check JIRA in PR Title'
 description: Check the title of a PR has a valid JIRA ticket ID
 
 inputs:
@@ -9,8 +9,7 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name: Regex Check on PR Title
-      uses: morrisoncole/pr-lint-action@v1.7.0
+    - uses: morrisoncole/pr-lint-action@v1.7.0
       with:
           title-regex: ^.*:.*\[[A-Z]{2,5}-\d+\]*
           on-failed-regex-fail-action: false

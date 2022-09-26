@@ -1,0 +1,5 @@
+*.yaml.tmpl
+
+templates/
+Tests/Resources/
+**/node_modules/

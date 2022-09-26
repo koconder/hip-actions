@@ -1,14 +1,14 @@
-name: "Gatekeeper"
-description: "hipages CI gatekeeper"
-author: "https://github.com/viniciusps"
+name: 'Gatekeeper'
+description: 'hipages CI gatekeeper'
+author: 'https://github.com/viniciusps'
 inputs:
   token:
     description: GitHub token
     default: ${{ github.token }}
     required: false
 runs:
-  using: "node12"
-  main: "dist/index.js"
+  using: 'node12'
+  main: 'dist/index.js'
 branding:
-  icon: "plus-circle"
-  color: "green"
+  icon: 'plus-circle'
+  color: 'green'

@@ -21,6 +21,10 @@ inputs:
     description: AWS Region
     required: false
 
+  docker-user:
+    description: Username for Docker login
+    default: hip-ci
+    required: false
   # GHCR token
   github-token:
     description: GITHUB_TOKEN
@@ -42,22 +46,25 @@ inputs:
   build-args:
     description: Buildx build-args
     required: false
-    default: ""
+    default: ''
 
 runs:
-  using: "composite"
+  using: 'composite'
   steps:
     - run: |
         grep -q @hipagesgroup yarn.lock && echo //npm.pkg.github.com/:_authToken=${{ inputs.npm-token }} >> .npmrc || true
       if: ${{ inputs.npm-token}}
       shell: bash
 
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
     - name: Log in to Github Container registry
-      uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+      uses: docker/login-action@v2
       if: ${{ inputs.registry == 'ghcr' }}
       with:
         registry: ${{ inputs.registry_url }}
-        username: hip-ci
+        username: ${{ inputs.docker-user }}
         password: ${{ inputs.github-token }}
 
     - name: Configure AWS credentials
@@ -73,34 +80,51 @@ runs:
       uses: aws-actions/amazon-ecr-login@v1
       if: ${{ inputs.registry == 'ecr' }}
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
+    - name: Setup Docker metadata
+      id: meta
+      uses: docker/metadata-action@v4
+      with:
+        images: |
+          ${{ inputs.registry_url }}/${{ github.repository }}
+        tags: |
+          # ensure backwards compatibility
+          type=raw,value=${{ env.CI_SHA_SHORT }}
+          # set latest tag for default branch
+          type=raw,value=latest,enable={{is_default_branch}}
+          type=raw,value={{branch}}
+          type=ref,event=branch
+          type=ref,event=pr
+          type=sha
 
     - name: Build, tag, and push image GHCR
       uses: docker/build-push-action@v3
       if: ${{ inputs.registry == 'ghcr' }}
       with:
         context: .
-        file: ./Dockerfile
         pull: false
         push: true
-        cache-from: type=registry,ref=${{ inputs.registry_url }}/${{ github.repository }}:latest
-        cache-to: type=registry,ref=${{ inputs.registry_url }}/${{ github.repository }}:latest,mode=max
-        tags: ${{ inputs.registry_url }}/${{ github.repository }}:${{ env.CI_SHA_SHORT }}
-        build-args: ${{ inputs.build-args }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+        build-args: |
+          DOCKER_META_IMAGE=${{ inputs.registry_url }}/${{ github.repository }}
+          ${{ inputs.build-args }}
 
     - name: Build, tag, and push image ECR
       uses: docker/build-push-action@v2
       if: ${{ inputs.registry == 'ecr' }}
       with:
         context: .
-        file: ./Dockerfile
         pull: true
         push: true
         cache-from: type=registry,ref=${{ inputs.registry_url }}/${{ github.repository }}:latest
         cache-to: type=inline
-        tags: ${{ inputs.registry_url }}/${{ github.repository }}:latest,${{ inputs.registry_url }}/${{ github.repository }}:${{ env.CI_SHA_SHORT }}
-        build-args: ${{ inputs.build-args }}
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+        build-args: |
+          DOCKER_META_IMAGE=${{ inputs.registry_url }}/${{ github.repository }}
+          ${{ inputs.build-args }}
 
     - uses: hipagesgroup/actions/lw-scanner-action@master
       name: Scan container images for vulnerabitilies using Lacework

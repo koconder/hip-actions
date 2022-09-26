@@ -1,0 +1,22 @@
+---
+name: hipages Checks
+
+on:
+    pull_request:
+        branches:
+            - master
+        types: [opened, synchronize, edited]
+    push:
+        branches:
+            - master
+
+jobs:
+    jira-title:
+        name: JIRA Title Check 🎪
+        if: github.ref_name != 'master'
+        runs-on: ubuntu-latest
+        steps:
+            - name: Regex Check on PR Title
+              uses: ./jira-title-check
+              with:
+                  repo-token: ${{ secrets.GITHUB_TOKEN }}

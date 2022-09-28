@@ -108,8 +108,8 @@ runs:
         DYNAMIC="${{ env.dynamicFile }}"
         BRANCH="${{ env.branchFile }}"
 
-        touch $BRANCH || true
-        touch $DYNAMIC || true
+        touch $BRANCH  &>/dev/null || true
+        touch $DYNAMIC &>/dev/null || true
 
         echo
         echo "Current ArgoCD file: ${MANIFEST}"

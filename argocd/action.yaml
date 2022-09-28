@@ -22,6 +22,7 @@ inputs:
   dynamic_file:
     description: Dynamic file to replace environment variables
     required: false
+    default: '.argocd.dynamic.yaml'
   branch_file:
     description: The file for this specific branch
     required: false

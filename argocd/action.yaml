@@ -139,7 +139,7 @@ runs:
             echo "Replacing dynamic file: ${DYNAMIC}"
             echo "---"
             cat "${DYNAMIC}"
-            echo "literalArgs=--values-literal-file ${DYNAMIC}" >> $GITHUB_ENV
+            echo "literalArgs=--ignore-missing-value-files --values-literal-file ${DYNAMIC}" >> $GITHUB_ENV
         fi
       shell: bash
 
@@ -185,7 +185,6 @@ runs:
         version: ${{ inputs.argocdVersion }}
         command: app create -f ${{ env.manifestFile }} ${{ env.literalArgs }}
         options: >-
-          --ignore-missing-value-files
           --set-finalizer
           --upsert
           --grpc-web

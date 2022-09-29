@@ -138,8 +138,7 @@ runs:
             echo
             echo "Replacing dynamic file: ${DYNAMIC}"
             echo "---"
-            cat "${DYNAMIC}"
-            
+            cat "${DYNAMIC}" 
             echo "literalArgs=--values-literal-file ${DYNAMIC}" >> $GITHUB_ENV
         fi
       shell: bash

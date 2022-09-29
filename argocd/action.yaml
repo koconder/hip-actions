@@ -22,7 +22,6 @@ inputs:
   dynamic_file:
     description: Dynamic file to replace environment variables
     required: false
-    default: '.argocd.dynamic.yaml'
   branch_file:
     description: The file for this specific branch
     required: false
@@ -140,6 +139,8 @@ runs:
             echo "Replacing dynamic file: ${DYNAMIC}"
             echo "---"
             cat "${DYNAMIC}"
+            
+            echo "literalArgs=--values-literal-file ${DYNAMIC}" >> $GITHUB_ENV
         fi
       shell: bash
 
@@ -183,7 +184,7 @@ runs:
       uses: clowdhaus/argo-cd-action/@main
       with:
         version: ${{ inputs.argocdVersion }}
-        command: app create -f ${{ env.manifestFile }} --values-literal-file ${{ env.dynamicFile }}
+        command: app create -f ${{ env.manifestFile }} ${{ env.literalArgs }}
         options: >-
           --ignore-missing-value-files
           --set-finalizer

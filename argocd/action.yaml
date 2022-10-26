@@ -5,7 +5,7 @@ inputs:
   argocdVersion:
     description: ArgoCD app version
     required: false
-    default: '2.4.11'
+    default: '2.5.0'
   argocdTimeout:
     description: ArgoCD app creation timeout
     required: false

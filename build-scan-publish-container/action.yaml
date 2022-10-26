@@ -94,6 +94,8 @@ runs:
           type=raw,value={{branch}}
           type=ref,event=branch
           type=ref,event=pr
+          type=ref,event=pr,suffix=-${{ env.CI_SHA_SHORT }}
+          type=ref,event=branch,suffix=-${{ env.CI_SHA_SHORT }}
           type=sha
 
     - name: Build, tag, and push image GHCR

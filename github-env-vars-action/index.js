@@ -213,10 +213,24 @@ try {
     const prDescription = pullRequest.body;
     core.exportVariable('CI_PR_DESCRIPTION', prDescription);
     core.info(`Set CI_PR_DESCRIPTION=${process.env.CI_PR_DESCRIPTION}`);
+
+    const prSha = pullRequest.head.sha;
+    core.exportVariable('CI_PR_SHA_SHORT', getShaShort(prSha));
+    core.info(`Set CI_PR_SHA_SHORT=${process.env.CI_PR_SHA_SHORT}`);
+
+    core.exportVariable('CI_PR_SHA', prSha);
+    core.info(`Set CI_PR_SHA=${process.env.CI_PR_SHA}`);
+
+    const prNumber = pullRequest.number;
+    core.exportVariable('CI_PR_NUMBER', prNumber);
+    core.info(`Set CI_PR_NUMBER=${process.env.CI_PR_NUMBER}`);
+
+    core.exportVariable('CI_PR_ID', prNumber);
+    core.info(`Set CI_PR_ID=${process.env.CI_PR_ID}`);
   } else {
-    core.info(
-        'No pull request. ' + 'Cannot set "CI_PR_TITLE" and "CI_PR_DESCRIPTION".',
-    );
+    core.info('No pull request. ' +
+      'Cannot set "CI_PR_SHA_SHORT", "CI_PR_SHA", "CI_PR_NUMBER", ' +
+      '"CI_PR_ID", "CI_PR_TITLE" and "CI_PR_DESCRIPTION".');
   }
 
   const actor = process.env.GITHUB_ACTOR;

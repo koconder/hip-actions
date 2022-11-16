@@ -1,0 +1,19 @@
+name: 'Check JIRA in PR Title'
+description: Check the title of a PR has a valid JIRA ticket ID
+
+inputs:
+  repo-token:
+    description: Github repository token for private repos
+    required: false
+
+runs:
+  using: 'composite'
+  steps:
+    - uses: morrisoncole/pr-lint-action@v1.7.0
+      with:
+          title-regex: ^.*:.*\[[A-Z]{2,5}-\d+\]*
+          on-failed-regex-fail-action: false
+          on-failed-regex-request-changes: false
+          on-failed-regex-create-review: true
+          on-failed-regex-comment: Valid JIRA ticket title is required ie. [ABC-123]
+          repo-token: ${{ inputs.GITHUB_TOKEN }}

@@ -5,7 +5,7 @@ inputs:
   argocdVersion:
     description: ArgoCD app version
     required: false
-    default: '2.4.11'
+    default: '2.5.0'
   argocdTimeout:
     description: ArgoCD app creation timeout
     required: false
@@ -108,8 +108,8 @@ runs:
         DYNAMIC="${{ env.dynamicFile }}"
         BRANCH="${{ env.branchFile }}"
 
-        touch $BRANCH || true
-        touch $DYNAMIC || true
+        touch $BRANCH  &>/dev/null || true
+        touch $DYNAMIC &>/dev/null || true
 
         echo
         echo "Current ArgoCD file: ${MANIFEST}"
@@ -139,6 +139,7 @@ runs:
             echo "Replacing dynamic file: ${DYNAMIC}"
             echo "---"
             cat "${DYNAMIC}"
+            echo "literalArgs=--ignore-missing-value-files --values-literal-file ${DYNAMIC}" >> $GITHUB_ENV
         fi
       shell: bash
 
@@ -182,9 +183,8 @@ runs:
       uses: clowdhaus/argo-cd-action/@main
       with:
         version: ${{ inputs.argocdVersion }}
-        command: app create -f ${{ env.manifestFile }} --values-literal-file ${{ env.dynamicFile }}
+        command: app create -f ${{ env.manifestFile }} ${{ env.literalArgs }}
         options: >-
-          --ignore-missing-value-files
           --set-finalizer
           --upsert
           --grpc-web

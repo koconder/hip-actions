@@ -16,4 +16,4 @@ runs:
           on-failed-regex-request-changes: false
           on-failed-regex-create-review: true
           on-failed-regex-comment: Valid JIRA ticket title is required ie. [ABC-123]
-          repo-token: ${{ inputs.GITHUB_TOKEN }}
+          repo-token: ${{ inputs.repo-token }}

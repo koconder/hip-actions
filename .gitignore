@@ -1,0 +1,15 @@
+*.log
+.DS_Store
+Thumbs.db
+Desktop.ini
+._*
+.dccache
+.cache
+logs
+.idea
+.vs
+.vscode
+*.swp
+*.swo
+*.iml
+*.*~

@@ -18,3 +18,4 @@ ignore: |
   templates/
   **/node_modules/
   **/dist/
+  

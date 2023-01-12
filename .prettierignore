@@ -3,3 +3,4 @@
 templates/
 Tests/Resources/
 **/node_modules/
+**/dist/
